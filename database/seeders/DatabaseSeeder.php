@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             ['Katering Berkah', 'layak', 90, 36, false], ['Italy Restaurant', 'organik', 0, 30, false], ['Bakery Delight', 'layak', 45, 18, true],
         ] as $i => [$p, $c, $por, $kg, $u]) {
             Report::create(['title' => 'Penyaluran ' . ($i + 1), 'provider_name' => $p, 'category' => $c, 'portions' => $por, 'weight_kg' => $kg, 'urgent' => $u,
-                'expires_at' => now()->subDays($i + 1), 'delivered_at' => now()->subDays($i + 1)->addHours(2), 'lat' => -6.22, 'lng' => 106.82,
+                'expires_at' => now()->subDays(($i + 1) * 25), 'delivered_at' => now()->subDays(($i + 1) * 25)->addHours(2), 'lat' => -6.22, 'lng' => 106.82,
                 'status' => 'delivered', 'partner_id' => Partner::nearest($c, -6.22, 106.82)->id, 'volunteer_name' => 'Relawan']);
         }
     }

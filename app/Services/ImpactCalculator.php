@@ -35,10 +35,21 @@ class ImpactCalculator
     {
         $d = fn () => Report::where('status', 'delivered');
         return [
-            ['Layak Konsumsi', (float) $d()->where('category', 'layak')->where('urgent', false)->sum('weight_kg'), '#047857'],
-            ['Organik', (float) $d()->where('category', 'organik')->sum('weight_kg'), '#f59e0b'],
-            ['Segera Ambil', (float) $d()->where('urgent', true)->sum('weight_kg'), '#dc2626'],
+            ['Layak Konsumsi', (float) $d()->where('category', 'layak')->where('urgent', false)->sum('weight_kg'), '#b7e22e'],
+            ['Organik', (float) $d()->where('category', 'organik')->sum('weight_kg'), '#4d7c2f'],
+            ['Segera Ambil', (float) $d()->where('urgent', true)->sum('weight_kg'), '#14401f'],
         ];
+    }
+
+    public static function monthly(int $n = 8): array
+    {
+        $out = [];
+        for ($i = $n - 1; $i >= 0; $i--) { $m = now()->startOfMonth()->subMonths($i); $out[$m->format('Y-m')] = ['m' => $m->format('M'), 'layak' => 0.0, 'organik' => 0.0, 'urgent' => 0.0]; }
+        foreach (Report::where('status', 'delivered')->where('delivered_at', '>=', now()->startOfMonth()->subMonths($n - 1))->get() as $r) {
+            $k = $r->delivered_at->format('Y-m');
+            if (isset($out[$k])) $out[$k][$r->urgent ? 'urgent' : $r->category] += $r->weight_kg;
+        }
+        return array_values($out);
     }
 
     public static function leaderboard(int $n = 5)

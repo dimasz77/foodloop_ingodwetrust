@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('dash')
 @section('title','Report Waste')
 @section('content')
 @php $K=\App\Services\ImpactCalculator::KG_PER_PORTION; $C=\App\Services\ImpactCalculator::CO2E_PER_KG; @endphp
