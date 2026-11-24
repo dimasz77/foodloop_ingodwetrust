@@ -1,40 +1,29 @@
 @extends('layout')
 @section('title','Beranda')
-@section('shell')
-<div class="relative overflow-hidden bg-[radial-gradient(ellipse_at_top,#2f7a34,#14401f_70%)] text-white">
- <span class="pointer-events-none absolute -left-6 top-40 select-none text-[9rem] opacity-90 md:text-[12rem]" aria-hidden="true">🥬</span>
- <span class="pointer-events-none absolute -right-4 top-36 select-none text-[9rem] opacity-90 md:text-[12rem]" aria-hidden="true">🍆</span>
- <header class="relative mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-  <a href="{{ route('home') }}" class="text-xl font-extrabold tracking-wide text-lime-300">🌿 FOODLOOP</a>
-  <nav class="hidden gap-8 text-sm font-semibold text-lime-300 md:flex" aria-label="Navigasi utama"><a href="{{ route('map') }}">Peta</a><a href="#cara">Cara Kerja</a><a href="{{ route('impact') }}">Impact</a><a href="#kontak">Kontak</a></nav>
-  <a class="rounded-full bg-lime-300 px-5 py-2 text-sm font-extrabold text-green-950" href="{{ route('report.create') }}">Mulai Lapor</a>
- </header>
- <section class="relative mx-auto max-w-4xl px-5 pb-10 pt-12 text-center">
-  <h1 class="font-serif text-4xl font-semibold leading-[1.05] md:text-7xl">Tutup Siklus Sampah Pangan, <span class="text-lime-300">Berikan Impact Nyata</span></h1>
-  <p class="mt-6 font-serif text-xl">Setiap porsi yang diselamatkan berarti.</p>
-  <div class="mt-8 flex flex-wrap justify-center gap-3"><a class="rounded-full bg-lime-300 px-7 py-3 font-extrabold text-green-950" href="{{ route('report.create') }}">Lapor Makanan</a><a class="rounded-full bg-white px-7 py-3 font-extrabold text-slate-900" href="{{ route('map') }}">Lihat Peta</a></div>
- </section>
- <div class="relative mx-auto max-w-5xl px-5">
-  <div class="grid gap-4 rounded-t-3xl bg-[#f6f4ec] p-4 text-slate-800 shadow-2xl md:grid-cols-[1fr_260px]">
-   <div><div class="rounded-2xl bg-lime-100 p-4"><b>Dampak Kita</b><div class="mt-3 grid gap-3 sm:grid-cols-3">
-    <div class="rounded-xl bg-white/80 p-3"><b class="text-2xl">{{ number_format($t['kg'],0,',','.') }} kg</b><div class="text-xs text-slate-500">Food Rescued</div></div>
-    <div class="rounded-xl bg-white/80 p-3"><b class="text-2xl">{{ number_format($t['meals'],0,',','.') }}</b><div class="text-xs text-slate-500">Meal Distributed</div></div>
-    <div class="rounded-xl bg-white/80 p-3"><b class="text-2xl">{{ number_format($t['co2_ton'],2,',','.') }} ton</b><div class="text-xs text-slate-500">CO₂e Prevented</div></div></div></div>
-    <b class="mt-4 block">Laporan Terbaru</b><div class="mt-2 overflow-x-auto rounded-xl bg-white"><table class="w-full text-left text-xs"><thead class="text-slate-400"><tr><th class="p-2">Makanan</th><th class="p-2">Penyedia</th><th class="p-2">Jalur</th><th class="p-2">Jumlah</th></tr></thead><tbody>
-    @foreach($recent as $r)<tr class="border-t"><td class="p-2">{{ $r->title }}</td><td class="p-2">{{ $r->provider_name }}</td><td class="p-2"><span class="rounded-full bg-green-100 px-2 py-0.5">{{ $r->category=='layak'?'Layak':'Organik' }}</span></td><td class="p-2">{{ $r->weight_kg }} kg</td></tr>@endforeach</tbody></table></div></div>
-   <aside class="rounded-2xl bg-green-100 p-4"><b>Perlu Segera Diambil</b><p class="text-xs text-slate-500">Makanan layak yang hampir kedaluwarsa.</p>
-    @foreach($urgent as $r)<div class="mt-3 rounded-xl bg-white p-3 text-sm"><b>{{ $r->title }}</b><div class="text-xs text-slate-500">{{ $r->provider_name }}</div><a href="{{ route('map') }}" class="mt-2 block rounded-lg bg-lime-400 py-1.5 text-center font-bold text-green-950">Klaim</a></div>@endforeach</aside>
-  </div></div>
-</div>
-<div class="mx-auto max-w-6xl px-5 py-14">
- <section><h2 class="font-serif text-3xl font-semibold">Interactive Rescue Map</h2><div class="mt-5 grid gap-4 md:grid-cols-3">
-  @foreach([['📍','Peta real-time','Hijau layak, oranye organik, merah mendesak.'],['🧭','Klaim & rute','Klaim lalu ikuti rute sebelum waktu habis.'],['📷','Bukti penyaluran','Unggah foto serah terima untuk validasi dampak.']] as [$i,$a,$b])<div class="card"><div class="text-3xl">{{ $i }}</div><b>{{ $a }}</b><p class="text-sm text-slate-600">{{ $b }}</p></div>@endforeach</div></section>
- <section id="cara" class="mt-14"><h2 class="font-serif text-3xl font-semibold">How FoodLoop Works?</h2><ol class="mt-5 grid gap-4 md:grid-cols-4">
-  @foreach([['Laporkan','Penyedia melapor surplus kurang dari 1 menit.'],['Ditemukan','Relawan atau penerima melihat dan mengklaim.'],['Dijemput','Relawan menjemput lewat rute terdekat.'],['Disalurkan','Makanan diserahkan, dampak tercatat.']] as $i=>[$a,$b])<li class="card"><span class="font-serif text-4xl text-green-700">{{ $i+1 }}</span><b class="block">{{ $a }}</b><span class="text-sm text-slate-600">{{ $b }}</span></li>@endforeach</ol></section>
- <section class="mt-14"><h2 class="font-serif text-3xl font-semibold">Kata Mitra</h2><div class="mt-5 grid gap-4 md:grid-cols-2">
-  <figure class="card"><blockquote>“Hal terbaik di 2026 adalah mulai bekerja bersama FoodLoop.”</blockquote><figcaption class="mt-2 text-sm text-slate-500">Killian Murphy, Italy Restaurant</figcaption></figure>
-  <figure class="card"><blockquote>“Kami sangat menghargai kolaborasi ini dan terus membangunnya.”</blockquote><figcaption class="mt-2 text-sm text-slate-500">Ellen Woods, SMILEY Restaurant</figcaption></figure></div></section>
- <section class="mt-14 rounded-3xl bg-green-900 p-10 text-center text-white"><h2 class="font-serif text-3xl">Ready to Rescue Food?</h2><p class="mb-5 mt-2">Jadikan setiap makanan bermakna, bukan berakhir di TPA.</p><a class="rounded-full bg-lime-300 px-7 py-3 font-extrabold text-green-950" href="{{ route('report.create') }}">Report Waste</a></section>
-</div>
-<footer id="kontak" class="bg-green-950 py-8 text-sm text-green-100"><div class="mx-auto grid max-w-6xl gap-6 px-5 md:grid-cols-3"><div><b class="text-lime-300">FoodLoop</b><p>Logistik food rescue dan pengalihan sampah organik. Mendukung SDG 2, 11, 12, dan 13.</p></div><div><b class="text-lime-300">Kontak</b><p>Institut Teknologi Del, Laguboti, Sumatera Utara<br>foodloop@example.id</p></div><div><b class="text-lime-300">Menu</b><p><a href="{{ route('map') }}">Peta</a> · <a href="{{ route('status') }}">Laporan</a> · <a href="{{ route('impact') }}">Impact</a></p></div></div></footer>
+@section('content')
+<section class="mx-auto max-w-5xl px-4 pt-10">
+ <div class="grid items-center gap-6 text-center md:grid-cols-[1fr_2fr_1fr]">
+  <div class="mx-auto grid h-40 w-40 place-items-center rounded-full bg-amber-100 text-7xl" role="img" aria-label="Ilustrasi sisa makanan">🥘</div>
+  <div><h1 class="text-2xl font-extrabold leading-tight md:text-3xl">Tutup Siklus Sampah Pangan,<br><span class="text-moss">Berikan Impact Nyata</span></h1>
+   <p class="mx-auto mt-3 max-w-md text-xs text-slate-600">Bergabunglah dengan ribuan Hero di seluruh Indonesia dalam misi menyelamatkan makanan layak dan mengolah sisa makanan menjadi energi.</p>
+   <div class="mt-4 flex justify-center gap-2"><a class="btn" href="{{ route('report.create') }}">Report Waste</a><a class="btn" href="{{ route('map') }}">Join as Partner</a></div>
+   <div class="mt-4 flex items-center justify-center gap-2 text-[11px] text-slate-500"><span class="flex -space-x-2">@foreach(['🧑🏽','👩🏻','🧔🏾'] as $a)<span class="grid h-7 w-7 place-items-center rounded-full bg-white ring-2 ring-cream">{{ $a }}</span>@endforeach</span>Bergabung bersama 2.450+ penyelamat pangan di seluruh Indonesia.</div></div>
+  <div class="mx-auto grid h-36 w-36 place-items-center rounded-[40%_60%_55%_45%] bg-green-800 text-center font-serif text-2xl font-bold leading-none text-white" role="img" aria-label="Zero waste">ZERO<br>WASTE</div></div>
+</section>
+<section class="mx-auto mt-16 grid max-w-5xl items-center gap-8 px-4 md:grid-cols-2">
+ <div class="relative h-64 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-100 to-sky-100 ring-1 ring-black/5" role="img" aria-label="Pratinjau peta"><div class="absolute left-3 top-3 rounded-lg bg-white px-3 py-1.5 text-[10px] text-slate-500 shadow">🔍 Cari lokasi atau jenis makanan…</div>
+  @foreach([[30,40,'#1f6b3a'],[48,55,'#d9363e'],[62,30,'#f28c28'],[40,70,'#1f6b3a'],[70,60,'#d9363e']] as [$x,$y,$c])<span class="absolute h-4 w-4 rounded-full border-2 border-white shadow" style="left:{{ $x }}%;top:{{ $y }}%;background:{{ $c }}"></span>@endforeach</div>
+ <div><h2 class="h2">Interactive Rescue Map</h2><p class="mt-1 text-xs text-slate-600">Temukan makanan surplus atau sisa disekitar Anda dan ambil peran dalam menyelamatkannya.</p>
+  <ul class="mt-4 space-y-3 text-xs">@foreach([['📍','Peta Interaktif real-time','Lihat lokasi makanan surplus terdekat'],['📷','Bukti Penyaluran','Unggah foto bukti serah terima'],['🧭','Klaim & Route Otomatis','Navigasi tercepat menuju lokasi penjemputan']] as [$i,$a,$b])<li class="flex gap-3"><span class="text-lg">{{ $i }}</span><span><b>{{ $a }}</b><br><span class="text-slate-500">{{ $b }}</span></span></li>@endforeach</ul>
+  <a class="btn mt-4" href="{{ route('map') }}">Buka Peta Sekarang ›</a></div>
+</section>
+<section class="mx-auto mt-16 grid max-w-5xl gap-6 px-4 md:grid-cols-[1fr_2fr]"><h2 class="h2">Creating Impact,<br>One <span class="text-moss">Meal</span> at a Time.</h2>
+ <div><p class="text-xs text-slate-600">Setiap kilogram makanan yang diselamatkan berarti lebih banyak porsi pangan, lebih sedikit limbah, dan emisi karbon yang berhasil dicegah.</p>
+ <div class="mt-4 grid gap-4 sm:grid-cols-3">@foreach([[number_format($t['kg'],0,',','.').' kg','Food Rescued','Makanan berhasil diselamatkan'],[number_format($t['meals'],0,',','.'),'Meal Distributed','Porsi makanan disalurkan'],[number_format($t['co2_ton'],2,',','.').' Ton','CO2 Prevented','Estimasi emisi dicegah']] as [$v,$a,$b])<div class="border-l-2 border-slate-300 pl-3"><b class="text-xl">{{ $v }}</b><div class="text-[11px] font-bold">{{ $a }}</div><div class="text-[10px] text-slate-500">{{ $b }}</div></div>@endforeach</div></div></section>
+<section class="mx-auto mt-16 max-w-5xl px-4"><h2 class="h2 text-center">How <span class="text-moss">FoodLoop</span> Works?</h2><ol class="mt-6 grid gap-6 sm:grid-cols-4">
+ @foreach([['Laporkan','Penyedia melaporkan makanan surplus kurang dari 1 menit'],['Ditemukan','Relawan/penerima melihat di peta dan mengklaim makanan'],['Dijemput','Relawan menjemput makanan dengan rute terdekat'],['Disalurkan','Makanan disalurkan kepada penerima manfaat']] as $i=>[$a,$b])<li class="flex gap-3"><span class="font-serif text-4xl text-slate-500">{{ $i+1 }}</span><span class="text-xs"><b>{{ $a }}</b><br><span class="text-slate-500">{{ $b }}</span></span></li>@endforeach</ol></section>
+<section class="mt-16 bg-gradient-to-br from-[#1b4747] to-[#2f6862] px-4 py-14 text-white"><div class="mx-auto grid max-w-5xl items-center gap-6 md:grid-cols-2"><div><h2 class="text-2xl font-extrabold">Every Excess Food ‖<br>Real Impact.</h2><p class="mt-3 text-xs text-white/80">FoodLoop connects restaurants, hotels, catering services, and communities to rescue excess food before it becomes waste. Every successful pickup helps feed people, reduce food waste, and lower carbon emissions.</p></div><div class="text-center text-8xl" role="img" aria-label="Keranjang sayur">🧺🥦🍅</div></div></section>
+<section class="mx-auto max-w-5xl px-4 py-12"><div class="flex items-center gap-4"><span class="text-xs font-bold">Potential Partners</span><span class="rounded-lg bg-blue-900 px-4 py-2 font-extrabold text-white">del</span></div>
+ <h2 class="h2 mt-8 text-center">What Partners Say About Working with Us</h2>
+ <div class="mt-6 grid gap-4 md:grid-cols-2">@foreach([['The best thing happened to me in 2026 is to start working with FoodLoop','Killian Murphy'],['We truly appreciated the collaboration and what we’ve been building together overtime','Ellen Woods']] as [$q,$n])<figure class="card"><blockquote class="text-xs text-slate-600">“{{ $q }}”</blockquote><figcaption class="mt-3 text-xs font-bold">{{ $n }}</figcaption></figure>@endforeach</div></section>
 @endsection

@@ -35,9 +35,9 @@ class ImpactCalculator
     {
         $d = fn () => Report::where('status', 'delivered');
         return [
-            ['Layak Konsumsi', (float) $d()->where('category', 'layak')->where('urgent', false)->sum('weight_kg'), '#b7e22e'],
-            ['Organik', (float) $d()->where('category', 'organik')->sum('weight_kg'), '#4d7c2f'],
-            ['Segera Ambil', (float) $d()->where('urgent', true)->sum('weight_kg'), '#14401f'],
+            ['Layak Konsumsi', (float) $d()->where('category', 'layak')->where('urgent', false)->sum('weight_kg'), '#1f6b3a'],
+            ['Organik', (float) $d()->where('category', 'organik')->sum('weight_kg'), '#f28c28'],
+            ['Segera Ambil', (float) $d()->where('urgent', true)->sum('weight_kg'), '#d9363e'],
         ];
     }
 
