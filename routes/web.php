@@ -1,7 +1,29 @@
 <?php
-
+use App\Http\Controllers\{AuthController,PageController,ReportController};
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/impact', [PageController::class, 'impact'])->name('impact');
+Route::get('/map', [ReportController::class, 'map'])->name('map');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+// Aktor 1: Pemberi makanan
+Route::middleware(['auth', 'role:provider'])->group(function () {
+    Route::get('/report', [ReportController::class, 'create'])->name('report.create');
+    Route::post('/report', [ReportController::class, 'store'])->name('report.store');
+});
+
+// Pemberi & penerima
+Route::middleware('auth')->group(function () {
+    Route::get('/status', [ReportController::class, 'status'])->name('status');
+    Route::get('/history', [ReportController::class, 'history'])->name('history');
+    Route::post('/reports/{report}/{action}', [ReportController::class, 'act'])
+        ->whereIn('action', ['claim', 'start', 'complete', 'reroute'])->name('report.act');
 });
