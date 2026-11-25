@@ -108,6 +108,7 @@ class Report extends Model
             'partner' => $this->partner?->name, 'co2e' => $this->co2e, 'photo' => $this->photo_url,
             'description' => $this->description,
             'mine' => auth()->check() && auth()->id() == $this->provider_id, 'claimedByMe' => $claimedByMe,
+            'canClaim' => (bool) auth()->user()?->canClaim($this),
             'contact' => $claimedByMe ? $this->provider?->whatsappUrl($this->contactMessage()) : null,
         ];
     }

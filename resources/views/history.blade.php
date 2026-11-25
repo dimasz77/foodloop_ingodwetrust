@@ -22,7 +22,7 @@
    <p class="text-xs text-white/80">@if($j['next'])Salurkan <b class="text-lime-300">{{ number_format($j['toNext'], 1, ',', '.') }} kg</b> lagi untuk mencapai <b>{{ $j['next'] }}</b>.@else Anda telah mencapai level tertinggi. Luar biasa! 🎉@endif</p>
    <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/15"><div class="h-full rounded-full bg-lime-300 transition-all duration-1000" style="width:{{ $j['progress'] }}%"></div></div>
    <div class="mt-4 grid grid-cols-3 gap-3 text-center">
-    @foreach([[$por, 0, 'Porsi'], [$j['kg'], 1, 'kg tersalurkan'], [$co2, 1, 'kg CO₂e dicegah']] as [$v, $d, $l])<div class="rounded-xl bg-white/10 p-2"><b class="text-lg" data-count="{{ $v }}" data-decimals="{{ $d }}">{{ number_format($v, $d, ',', '.') }}</b><div class="text-[10px] text-white/70">{{ $l }}</div></div>@endforeach
+    @foreach([[$por, 0, 'Porsi'], [$j['kg'], 1, 'kg tersalurkan'], [$co2, 1, 'kg CO₂e dicegah']] as [$v, $d, $l])<div class="rounded-xl bg-white/10 p-2"><b class="text-lg" data-count="{{ $v }}" data-decimals="{{ $d }}">{{ number_format($v, $d, ',', '.') }}</b><div class="text-[0.6875rem] text-white/70">{{ $l }}</div></div>@endforeach
    </div></div>
  </section>
 
@@ -32,7 +32,7 @@
    @foreach($j['badges'] as $b)
     <div class="group relative rounded-2xl p-4 text-center ring-1 transition {{ $b['unlocked'] ? 'bg-white ring-moss/20 hover:-translate-y-1 hover:shadow-lg' : 'bg-slate-50 ring-black/5' }}" data-reveal style="transition-delay:{{ $loop->index * 60 }}ms">
      <div class="text-3xl transition group-hover:scale-110 {{ $b['unlocked'] ? '' : 'opacity-30 grayscale' }}">{{ $b['icon'] }}</div>
-     <b class="mt-1 block text-[11px] {{ $b['unlocked'] ? '' : 'text-slate-400' }}">{{ $b['name'] }}</b><span class="text-[10px] text-slate-500">{{ $b['desc'] }}</span>
+     <b class="mt-1 block text-[0.75rem] {{ $b['unlocked'] ? '' : 'text-slate-400' }}">{{ $b['name'] }}</b><span class="text-[0.6875rem] text-slate-500">{{ $b['desc'] }}</span>
      @unless($b['unlocked'])<span class="absolute right-2 top-2 text-xs" aria-label="Terkunci">🔒</span>@endunless
     </div>
    @endforeach
@@ -40,8 +40,8 @@
 
  {{-- Jejak --}}
  <section class="mt-10" x-data="{f:'all',n:6}">
-  <div class="flex flex-wrap items-end justify-between gap-3" data-reveal><div><h2 class="sec"><span class="h-[3px] w-8 rounded bg-moss"></span>Riwayat Penyaluran</h2><p class="text-[11px] text-slate-500">{{ $items->count() }} penyaluran telah selesai.</p></div>
-   <div class="inline-flex rounded-full bg-white p-1 text-[11px] font-bold shadow-sm ring-1 ring-black/5" role="tablist">@foreach(['all' => 'Semua', 'layak' => '🍱 Layak', 'organik' => '♻️ Organik'] as $k => $l)<button role="tab" :aria-selected="f=='{{ $k }}'" @click="f='{{ $k }}';n=6" class="rounded-full px-3 py-1.5 transition" :class="f=='{{ $k }}'?'bg-moss text-white':'text-slate-500'">{{ $l }}</button>@endforeach</div></div>
+  <div class="flex flex-wrap items-end justify-between gap-3" data-reveal><div><h2 class="sec"><span class="h-[3px] w-8 rounded bg-moss"></span>Riwayat Penyaluran</h2><p class="text-[0.75rem] text-slate-500">{{ $items->count() }} penyaluran telah selesai.</p></div>
+   <div class="inline-flex rounded-full bg-white p-1 text-[0.75rem] font-bold shadow-sm ring-1 ring-black/5" role="tablist">@foreach(['all' => 'Semua', 'layak' => '🍱 Layak', 'organik' => '♻️ Organik'] as $k => $l)<button role="tab" :aria-selected="f=='{{ $k }}'" @click="f='{{ $k }}';n=6" class="rounded-full px-3 py-1.5 transition" :class="f=='{{ $k }}'?'bg-moss text-white':'text-slate-500'">{{ $l }}</button>@endforeach</div></div>
   <ul class="mt-3 space-y-3">
    @forelse($items as $idx => $h)
     <li x-show="f=='all' ? {{ $idx }} < n : f=='{{ $h->category }}'" x-transition.opacity class="card flex flex-wrap items-center justify-between gap-3 !py-3">

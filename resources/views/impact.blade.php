@@ -22,19 +22,20 @@
    ] as [$v, $d, $s, $l, $p])
     <div class="flex items-center gap-4 p-6">
      <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-lime-300 text-[#0c1f19]">{!! $icon($p) !!}</span>
-     <div><dt class="text-[11px] font-bold uppercase tracking-wider text-white/60">{{ $l }}</dt>
-      <dd class="text-4xl font-extrabold leading-tight"><span data-count="{{ $v }}" data-decimals="{{ $d }}">{{ $nf($v, $d) }}</span> <span class="text-base text-lime-300">{{ $s }}</span></dd></div>
+     <div><dt class="text-[0.75rem] font-bold uppercase tracking-wider text-white/60">{{ $l }}</dt>
+      <dd class="text-4xl font-extrabold leading-tight"><span data-count="{{ $v }}" data-decimals="{{ $d }}">{{ $nf($v, $d) }}</span> <span class="text-base text-lime-300">{{ $s }}</span></dd>
+      <dd class="mt-1"><a href="{{ route('about') }}" class="rounded bg-white/10 px-1.5 py-0.5 text-[0.6875rem] font-bold text-white/80 hover:bg-white/20">{{ ['Target SDG 12.3', 'Target SDG 2.1', 'Terkait SDG 13'][$loop->index] }}</a></dd></div>
     </div>
    @endforeach
   </dl>
-  <p class="mt-3 text-[11px] text-white/55">Dari {{ $t['reports'] }} laporan · {{ $nf($pending, 1) }} kg masih dalam proses penyaluran.</p>
+  <p class="mt-3 text-[0.75rem] text-white/55">Dari {{ $t['reports'] }} laporan · {{ $nf($pending, 1) }} kg masih dalam proses penyaluran.</p>
  </x-slot:after>
 </x-page-hero>
 
 {{-- PITA 2 (lime): padanan agar angka mudah dibayangkan --}}
 <section class="bg-lime-300 text-[#0c1f19]" aria-labelledby="eq-title">
  <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 md:grid-cols-[1fr_3fr]">
-  <div data-reveal><p class="text-[11px] font-extrabold uppercase tracking-[.2em]">Agar mudah dibayangkan</p><h2 id="eq-title" class="mt-2 text-3xl font-extrabold leading-tight">Setara dengan…</h2><p class="mt-2 text-[11px] font-semibold text-[#0c1f19]/70">Estimasi: 0,12 kg CO₂e/km mobil · 22 kg CO₂/pohon/tahun.</p></div>
+  <div data-reveal><p class="text-[0.75rem] font-extrabold uppercase tracking-[.2em]">Agar mudah dibayangkan</p><h2 id="eq-title" class="mt-2 text-3xl font-extrabold leading-tight">Setara dengan…</h2><p class="mt-2 text-[0.75rem] font-semibold text-[#0c1f19]/70">Estimasi: 0,12 kg CO₂e/km mobil · 22 kg CO₂/pohon/tahun.</p></div>
   <div class="grid gap-6 sm:grid-cols-3">
    @foreach([
     [$eq['car_km'], 0, 'km perjalanan mobil yang tidak terjadi', '<path d="M5 16h14M6 16l1.5-5h9L18 16M7 19a1 1 0 1 0 0-2M17 19a1 1 0 1 0 0-2"/><path d="M4 16v-2l2-3"/>'],
@@ -57,18 +58,18 @@
   <div x-data="{h:null}" data-reveal>
    <p class="sec"><span class="h-[3px] w-8 rounded bg-moss"></span>Tren</p>
    <div class="mt-2 flex flex-wrap items-end justify-between gap-3"><div><h2 class="text-xl font-extrabold">Makanan Tersalurkan per Bulan</h2><p class="text-xs text-slate-500">kg per kategori, 8 bulan terakhir · arahkan kursor atau tab ke batang untuk rincian</p></div>
-    <ul class="flex flex-wrap gap-3 text-[11px] text-slate-600" aria-label="Legenda">@foreach($series as [$k, $n, $c])<li class="flex items-center gap-1.5"><i class="h-2.5 w-2.5 rounded-sm" style="background:{{ $c }}"></i>{{ $n }}</li>@endforeach</ul></div>
+    <ul class="flex flex-wrap gap-3 text-[0.75rem] text-slate-600" aria-label="Legenda">@foreach($series as [$k, $n, $c])<li class="flex items-center gap-1.5"><i class="h-2.5 w-2.5 rounded-sm" style="background:{{ $c }}"></i>{{ $n }}</li>@endforeach</ul></div>
    <div class="overflow-x-auto">
     <div class="relative mt-6 h-60 min-w-[480px]">
      <div class="flex h-full items-end gap-2 border-b border-slate-200">
       @foreach($monthly as $i => $m)
        @php $tot = $m['layak'] + $m['organik'] + $m['urgent']; @endphp
        <div class="relative flex h-full flex-1 flex-col items-center justify-end" tabindex="0" @mouseenter="h={{ $i }}" @mouseleave="h=null" @focus="h={{ $i }}" @blur="h=null" aria-label="{{ $m['m'] }}: {{ $nf($tot, 1) }} kg">
-        <span class="mb-1 text-[10px] font-bold text-slate-600">{{ $tot > 0 ? $nf($tot) : '' }}</span>
+        <span class="mb-1 text-[0.6875rem] font-bold text-slate-600">{{ $tot > 0 ? $nf($tot) : '' }}</span>
         <div class="flex w-full max-w-[40px] flex-col-reverse gap-[2px] transition-opacity" :class="h!==null&&h!={{ $i }}&&'opacity-40'" style="height:{{ $tot / $maxMonth * 85 }}%">
          @foreach($series as [$k, $n, $c])@if($m[$k] > 0)<div class="w-full last:rounded-t" style="flex:{{ $m[$k] }};background:{{ $c }}"></div>@endif @endforeach
         </div>
-        <div x-show="h=={{ $i }}" x-cloak x-transition.opacity class="pointer-events-none absolute bottom-full z-10 mb-1 w-40 rounded-lg bg-slate-900 p-2 text-[11px] text-white shadow-xl">
+        <div x-show="h=={{ $i }}" x-cloak x-transition.opacity class="pointer-events-none absolute bottom-full z-10 mb-1 w-40 rounded-lg bg-slate-900 p-2 text-[0.75rem] text-white shadow-xl">
          <b class="block border-b border-white/20 pb-1">{{ $m['m'] }} · {{ $nf($tot, 1) }} kg</b>
          @foreach($series as [$k, $n, $c])<div class="mt-1 flex items-center gap-2"><i class="h-0.5 w-3" style="background:{{ $c }}"></i><b>{{ $nf($m[$k], 1) }} kg</b><span class="text-white/60">{{ $n }}</span></div>@endforeach
         </div>
@@ -76,7 +77,7 @@
       @endforeach
      </div>
     </div>
-    <div class="flex min-w-[480px] gap-2 pt-1 text-center text-[10px] text-slate-500">@foreach($monthly as $m)<span class="flex-1">{{ $m['m'] }}</span>@endforeach</div>
+    <div class="flex min-w-[480px] gap-2 pt-1 text-center text-[0.6875rem] text-slate-500">@foreach($monthly as $m)<span class="flex-1">{{ $m['m'] }}</span>@endforeach</div>
    </div>
    <details class="mt-4 text-xs"><summary class="cursor-pointer font-bold text-moss">Lihat sebagai tabel</summary>
     <div class="mt-2 overflow-x-auto"><table class="w-full text-left"><thead class="text-slate-500"><tr><th class="py-1 pr-3">Bulan</th>@foreach($series as [$k, $n])<th class="py-1 pr-3 text-right">{{ $n }} (kg)</th>@endforeach</tr></thead><tbody>@foreach($monthly as $m)<tr class="border-t"><td class="py-1 pr-3">{{ $m['m'] }}</td>@foreach($series as [$k])<td class="py-1 pr-3 text-right">{{ $nf($m[$k], 1) }}</td>@endforeach</tr>@endforeach</tbody></table></div></details>
@@ -93,7 +94,7 @@
       @php $off += $l; @endphp
      @endforeach
     </svg>
-    <div class="pointer-events-none absolute inset-0 grid place-items-center text-center"><div><b class="text-xl" x-text="h===null?'{{ $nf(array_sum(array_column($cats, 1))) }} kg':Math.round(cats[h][1]).toLocaleString('id-ID')+' kg'">{{ $nf(array_sum(array_column($cats, 1))) }} kg</b><div class="text-[10px] text-slate-500" x-text="h===null?'Total tersalurkan':cats[h][0]">Total tersalurkan</div></div></div>
+    <div class="pointer-events-none absolute inset-0 grid place-items-center text-center"><div><b class="text-xl" x-text="h===null?'{{ $nf(array_sum(array_column($cats, 1))) }} kg':Math.round(cats[h][1]).toLocaleString('id-ID')+' kg'">{{ $nf(array_sum(array_column($cats, 1))) }} kg</b><div class="text-[0.6875rem] text-slate-500" x-text="h===null?'Total tersalurkan':cats[h][0]">Total tersalurkan</div></div></div>
    </div>
    <ul class="mt-6 space-y-1 text-xs">@foreach($cats as $i => [$n, $kg, $c])<li class="flex items-center gap-3 rounded-xl p-2 transition" :class="h=={{ $i }}&&'bg-slate-50'" @mouseenter="h={{ $i }}" @mouseleave="h=null"><i class="h-3 w-3 shrink-0 rounded-full" style="background:{{ $c }}"></i><b class="flex-1">{{ $n }}</b><span class="text-slate-500">{{ $nf($kg) }} kg · {{ round($kg / $sum * 100) }}%</span></li>@endforeach</ul>
   </div>
@@ -121,7 +122,7 @@
    <h2 class="mt-2 text-3xl font-extrabold leading-tight">Pemberi dengan Kontribusi Terbesar</h2>
    <p class="mt-3 text-sm text-slate-600">Diurutkan berdasarkan total kg makanan yang tersalurkan. Setiap laporan surplus menambah dampak Anda.</p>
    <div class="mt-6 flex flex-wrap gap-3">
-    @if(auth()->user()?->role === 'recipient')<a class="btn btn-g px-5 py-3" href="{{ route('map') }}">Cari Makanan</a>@else<a class="btn btn-g px-5 py-3" href="{{ route('report.create') }}">Laporkan Surplus</a>@endif
+    @if(auth()->check() && !auth()->user()->isProvider())<a class="btn btn-g px-5 py-3" href="{{ route('map') }}">Cari Makanan</a>@else<a class="btn btn-g px-5 py-3" href="{{ route('report.create') }}">Laporkan Surplus</a>@endif
     @auth<a href="{{ route('history') }}" class="btn btn-w px-5 py-3">Lencana Saya</a>@endauth
    </div>
   </div>

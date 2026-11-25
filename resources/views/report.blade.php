@@ -7,7 +7,7 @@
 <form method="POST" action="{{ route('report.store') }}" enctype="multipart/form-data" x-data="rep()" @submit="sending=true" class="pull-up mx-auto max-w-6xl px-4">@csrf
 
  {{-- Indikator progres (Heuristik #1: visibilitas status sistem) --}}
- <ol class="sticky top-[4.75rem] z-[900] grid grid-cols-4 gap-2 rounded-2xl bg-white/95 p-3 text-[10px] font-bold shadow-xl ring-1 ring-black/5 backdrop-blur" aria-label="Progres pengisian">
+ <ol class="sticky top-[4.75rem] z-[900] grid grid-cols-4 gap-2 rounded-2xl bg-white/95 p-3 text-[0.6875rem] font-bold shadow-xl ring-1 ring-black/5 backdrop-blur" aria-label="Progres pengisian">
   @foreach(['Detail Makanan', 'Checklist', 'Lokasi & Kontak', 'Hasil'] as $i => $s)
    <li><div class="h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-moss transition-all duration-500" :style="'width:'+steps[{{ $i }}]+'%'"></div></div><span class="mt-1 block truncate" :class="steps[{{ $i }}]==100?'text-moss':'text-slate-400'"><span x-text="steps[{{ $i }}]==100?'✔':'{{ $i + 1 }}'"></span> {{ $s }}</span></li>
   @endforeach
@@ -16,7 +16,7 @@
  </ol>
 
  <section class="card mt-5 grid gap-4 md:grid-cols-2">
-  <h2 class="sec md:col-span-2"><span class="grid h-6 w-6 place-items-center rounded-full bg-moss text-[11px] tracking-normal text-white">1</span>Detail Makanan</h2>
+  <h2 class="sec md:col-span-2"><span class="grid h-6 w-6 place-items-center rounded-full bg-moss text-[0.75rem] tracking-normal text-white">1</span>Detail Makanan</h2>
   <div><label class="lbl" for="ti">Keterangan Makanan <span class="text-red-600">*</span></label><input id="ti" name="title" class="inp" required maxlength="120" x-model="title" placeholder="Contoh: Nasi kotak dari seminar kampus" @error('title') aria-invalid="true" aria-describedby="ti-err" @enderror>
    @error('title')<p id="ti-err" class="err">⚠ {{ $message }}</p>@enderror
    <div class="mt-2 flex flex-wrap gap-1">@foreach(['🍱 Nasi kotak', '🍞 Roti & kue', '🥗 Prasmanan', '🥦 Sisa sayur & buah'] as $s)<button type="button" class="chip bg-slate-100 text-slate-600 transition hover:bg-moss hover:text-white" @click="title='{{ mb_substr($s, 2) }}'">{{ $s }}</button>@endforeach</div></div>
@@ -29,26 +29,26 @@
    <p class="hint col-span-2 -mt-1">Isi salah satu, yang lain dihitung otomatis. 1 porsi ≈ {{ str_replace('.', ',', $K) }} kg.</p>
    @error('weight_kg')<p class="err col-span-2 -mt-2">⚠ {{ $message }}</p>@enderror
    <div class="col-span-2"><span class="lbl">Opsi Pengantaran</span><div class="grid grid-cols-2 gap-2 text-xs">@foreach(['Self-pickup' => '🏃 Diambil penerima', 'Diantar' => '🚚 Saya antar'] as $v => $l)<label class="cursor-pointer rounded-lg border px-3 py-2 text-center font-bold transition" :class="delivery=='{{ $v }}'?'border-moss bg-moss/10 text-moss':'border-slate-200'"><input type="radio" name="delivery" value="{{ $v }}" x-model="delivery" class="sr-only">{{ $l }}</label>@endforeach</div></div>
-   <div class="col-span-2"><label class="lbl" for="ds">Deskripsi (Opsional)</label><textarea id="ds" name="description" rows="3" maxlength="500" class="inp" x-model="desc" placeholder="Bahan, cara penyimpanan, dll."></textarea><div class="text-right text-[10px]" :class="desc.length>450?'text-red-600':'text-slate-400'"><span x-text="desc.length"></span>/500</div></div></div>
+   <div class="col-span-2"><label class="lbl" for="ds">Deskripsi (Opsional)</label><textarea id="ds" name="description" rows="3" maxlength="500" class="inp" x-model="desc" placeholder="Bahan, cara penyimpanan, dll."></textarea><div class="text-right text-[0.6875rem]" :class="desc.length>450?'text-red-600':'text-slate-400'"><span x-text="desc.length"></span>/500</div></div></div>
   <div><span class="lbl">Foto Makanan (disarankan)</span>
    <label for="ph" @dragover.prevent="drag=true" @dragleave.prevent="drag=false" @drop.prevent="drop($event)" class="relative grid h-64 cursor-pointer place-items-center overflow-hidden rounded-xl border-2 border-dashed text-center text-xs text-slate-500 transition" :class="drag?'border-moss bg-moss/5 scale-[1.01]':'border-slate-300 bg-slate-50 hover:border-moss'">
     <template x-if="photo"><img :src="photo" alt="Pratinjau foto makanan" class="absolute inset-0 h-full w-full object-cover"></template>
     <span x-show="!photo"><span class="text-3xl">📤</span><br><b>Klik atau seret foto ke sini</b><br>JPG/PNG, maks. 5MB</span>
-    <span x-show="photo" x-cloak class="absolute bottom-2 right-2 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold shadow">Ganti foto</span></label>
+    <span x-show="photo" x-cloak class="absolute bottom-2 right-2 rounded-lg bg-white/90 px-2 py-1 text-[0.6875rem] font-bold shadow">Ganti foto</span></label>
    <input id="ph" x-ref="file" type="file" name="photo" accept="image/png,image/jpeg" capture="environment" class="sr-only" @change="preview($event.target.files[0])">
-   <p x-show="photoErr" x-cloak class="mt-1 text-[11px] text-red-600" x-text="photoErr"></p></div>
+   <p x-show="photoErr" x-cloak class="mt-1 text-[0.75rem] text-red-600" x-text="photoErr"></p></div>
  </section>
 
- <section class="card mt-6"><h2 class="sec"><span class="grid h-6 w-6 place-items-center rounded-full bg-moss text-[11px] tracking-normal text-white">2</span>Checklist Kelayakan</h2><p class="mt-1 text-xs text-slate-600">Jawab pertanyaan berikut. Satu jawaban berisiko akan mengarahkan makanan ke jalur organik.</p>
+ <section class="card mt-6"><h2 class="sec"><span class="grid h-6 w-6 place-items-center rounded-full bg-moss text-[0.75rem] tracking-normal text-white">2</span>Checklist Kelayakan</h2><p class="mt-1 text-xs text-slate-600">Jawab pertanyaan berikut. Satu jawaban berisiko akan mengarahkan makanan ke jalur organik.</p>
   <div class="mt-3">@foreach(['q1' => ['🌡️', 'Disimpan pada suhu aman? (di bawah 5°C atau di atas 60°C)', 'y'], 'q2' => ['👃', 'Berbau asam/busuk?', 'n'], 'q3' => ['⏳', 'Sudah lebih dari 4 jam di suhu ruang?', 'n'], 'q4' => ['📦', 'Kemasan masih baik dan bersih?', 'y']] as $k => [$ic, $q, $safe])
    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-3 text-xs last:border-0"><span id="{{ $k }}l" class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-slate-50 text-base">{{ $ic }}</span>{{ $q }}<span x-show="{{ $k }}" x-cloak x-text="{{ $k }}=='{{ $safe }}'?'✅':'⚠️'"></span></span>
     <span class="flex gap-2" role="radiogroup" aria-labelledby="{{ $k }}l">@foreach(['y' => 'YA', 'n' => 'TIDAK'] as $v => $l)<label class="cursor-pointer rounded-md border px-4 py-1.5 font-bold transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-moss/40" :class="{{ $k }}=='{{ $v }}'?'border-teal2 bg-teal2 text-white shadow':'bg-white text-slate-700 hover:border-teal2'"><input class="sr-only" type="radio" name="{{ $k }}" value="{{ $v }}" x-model="{{ $k }}" required>{{ $l }}</label>@endforeach</span></div>
   @endforeach</div>
  </section>
 
- <section x-ref="pick" class="card mt-6 scroll-mt-32"><h2 class="sec"><span class="grid h-6 w-6 place-items-center rounded-full bg-moss text-[11px] tracking-normal text-white">3</span>Lokasi &amp; Kontak</h2><p class="mt-1 text-xs text-slate-600">Geser pin atau klik peta. Garis putus-putus menunjukkan mitra tujuan terdekat.</p>
+ <section x-ref="pick" class="card mt-6 scroll-mt-32"><h2 class="sec"><span class="grid h-6 w-6 place-items-center rounded-full bg-moss text-[0.75rem] tracking-normal text-white">3</span>Lokasi &amp; Kontak</h2><p class="mt-1 text-xs text-slate-600">Geser pin atau klik peta. Garis putus-putus menunjukkan mitra tujuan terdekat.</p>
   <div id="pm" x-init="initMap()" class="mt-3 h-72 overflow-hidden rounded-xl ring-1 ring-black/10" role="application" aria-label="Pilih lokasi penjemputan"></div>
-  <p class="mt-1 text-[11px] text-slate-500">Koordinat: <span x-text="(+lat).toFixed(5)+', '+(+lng).toFixed(5)"></span> · <button type="button" class="font-bold text-moss underline" @click="geo()" x-text="locating?'Mencari lokasi…':'🎯 Gunakan lokasi saya'"></button></p>
+  <p class="mt-1 text-[0.75rem] text-slate-500">Koordinat: <span x-text="(+lat).toFixed(5)+', '+(+lng).toFixed(5)"></span> · <button type="button" class="font-bold text-moss underline" @click="geo()" x-text="locating?'Mencari lokasi…':'🎯 Gunakan lokasi saya'"></button></p>
   <input type="hidden" name="lat" :value="lat"><input type="hidden" name="lng" :value="lng">
   <h3 class="mt-5 text-sm font-extrabold">Kontak Food Provider</h3>
   <div class="mt-2 grid gap-4 md:grid-cols-2"><div><label class="lbl" for="pt">Jenis Food Provider</label><select id="pt" name="provider_type" class="inp">@foreach(['Hotel', 'Restoran', 'Katering', 'Event / Kampus', 'Toko Roti'] as $o)<option @selected(old('provider_type') == $o)>{{ $o }}</option>@endforeach</select></div>
@@ -65,11 +65,11 @@
     <div><span class="chip bg-white/20">Hasil Analisis</span><h2 class="mt-1 text-2xl font-extrabold" x-text="ok?'Jalur Pangan (Human-First)':'Jalur Organik (Earth-First)'"></h2>
      <p class="mt-1 text-xs text-white/85" x-text="ok?'Makanan Anda layak konsumsi dan akan disalurkan kepada penerima manfaat terdekat.':'Makanan akan dialihkan ke maggot BSF atau kompos agar tidak berakhir di TPA.'"></p></div></div>
    <div class="grid gap-4 bg-white p-6 text-center sm:grid-cols-3">
-    <div><div class="text-[11px] text-slate-500" x-text="ok?'Penerima terdekat':'Pengolah organik terdekat'"></div><b class="block text-sm" x-text="near?near.name:'-'"></b><span class="text-xs text-slate-500" x-text="near?near.d.toFixed(1).replace('.',',')+' km':''"></span></div>
-    <div><div class="text-[11px] text-slate-500">Estimasi porsi</div><b class="text-2xl text-moss" x-text="pr"></b></div>
-    <div><div class="text-[11px] text-slate-500">CO₂e dicegah</div><b class="text-2xl text-moss" x-text="co2+' kg'"></b></div>
+    <div><div class="text-[0.75rem] text-slate-500" x-text="ok?'Penerima terdekat':'Pengolah organik terdekat'"></div><b class="block text-sm" x-text="near?near.name:'-'"></b><span class="text-xs text-slate-500" x-text="near?near.d.toFixed(1).replace('.',',')+' km':''"></span></div>
+    <div><div class="text-[0.75rem] text-slate-500">Estimasi porsi</div><b class="text-2xl text-moss" x-text="pr"></b></div>
+    <div><div class="text-[0.75rem] text-slate-500">CO₂e dicegah</div><b class="text-2xl text-moss" x-text="co2+' kg'"></b></div>
    </div>
-   <div class="flex flex-wrap items-center justify-between gap-3 border-t bg-slate-50 px-6 py-4"><p class="text-[11px] text-slate-500" x-text="w?'Siap dikirim. Penerima di sekitar akan melihat laporan Anda di peta.':'Isi jumlah porsi atau berat terlebih dahulu.'"></p>
+   <div class="flex flex-wrap items-center justify-between gap-3 border-t bg-slate-50 px-6 py-4"><p class="text-[0.75rem] text-slate-500" x-text="w?'Siap dikirim. Penerima di sekitar akan melihat laporan Anda di peta.':'Isi jumlah porsi atau berat terlebih dahulu.'"></p>
     <button class="btn btn-g px-6 py-3 text-sm" :disabled="sending||!w"><span x-show="!sending">Kirim Laporan ›</span><span x-show="sending" x-cloak>⏳ Mengirim…</span></button></div>
   </div>
  </section>

@@ -32,7 +32,7 @@
 
 {{-- Pemilih laporan (pengenalan, bukan ingatan) --}}
 @if($others->count() > 1)
- <nav class="mb-5 flex gap-2 overflow-x-auto rounded-2xl bg-white p-2 text-[11px] shadow-xl ring-1 ring-black/5" aria-label="Laporan lainnya"><span class="flex shrink-0 items-center px-2 font-extrabold uppercase tracking-wide text-slate-400">Laporan:</span>@foreach($others as $o)<a href="{{ route('status', ['id' => $o->id]) }}" @if($o->id == $r->id) aria-current="page" @endif class="flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 font-semibold transition {{ $o->id == $r->id ? 'border-[#0c1f19] bg-[#0c1f19] text-white' : 'bg-white hover:border-moss' }}"><span class="h-2 w-2 rounded-full" style="background:{{ $o->status == 'delivered' ? '#94a3b8' : $o->color }}"></span>{{ \Illuminate\Support\Str::limit($o->title, 24) }}</a>@endforeach</nav>
+ <nav class="mb-5 flex gap-2 overflow-x-auto rounded-2xl bg-white p-2 text-[0.75rem] shadow-xl ring-1 ring-black/5" aria-label="Laporan lainnya"><span class="flex shrink-0 items-center px-2 font-extrabold uppercase tracking-wide text-slate-400">Laporan:</span>@foreach($others as $o)<a href="{{ route('status', ['id' => $o->id]) }}" @if($o->id == $r->id) aria-current="page" @endif class="flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 font-semibold transition {{ $o->id == $r->id ? 'border-[#0c1f19] bg-[#0c1f19] text-white' : 'bg-white hover:border-moss' }}"><span class="h-2 w-2 rounded-full" style="background:{{ $o->status == 'delivered' ? '#94a3b8' : $o->color }}"></span>{{ \Illuminate\Support\Str::limit($o->title, 24) }}</a>@endforeach</nav>
 @endif
 
 <div class="grid gap-6 rounded-2xl bg-white p-5 shadow-xl ring-1 ring-black/5 md:grid-cols-[1.4fr_1fr]">
@@ -40,7 +40,7 @@
   <p class="sec"><span class="h-[3px] w-8 rounded bg-moss"></span>Kontribusi ini</p>
   <div class="mt-4 grid grid-cols-3 gap-3 text-center">
    @foreach([[$r->portions, 0, 'Porsi'], [$r->weight_kg, 1, 'kg'], [$r->co2e, 1, 'kg CO₂e dicegah']] as [$v, $dc, $l])
-    <div class="rounded-2xl bg-cream p-4"><b class="text-2xl text-moss" data-count="{{ $v }}" data-decimals="{{ $dc }}">{{ number_format($v, $dc, ',', '.') }}</b><div class="text-[10px] font-semibold text-slate-500">{{ $l }}</div></div>
+    <div class="rounded-2xl bg-cream p-4"><b class="text-2xl text-moss" data-count="{{ $v }}" data-decimals="{{ $dc }}">{{ number_format($v, $dc, ',', '.') }}</b><div class="text-[0.6875rem] font-semibold text-slate-500">{{ $l }}</div></div>
    @endforeach
   </div>
  </div>
@@ -51,13 +51,13 @@
 {{-- Timeline --}}
 <section class="card mt-8" data-reveal>
  <h2 class="text-sm font-extrabold">Perjalanan Makanan</h2>
- <ol class="relative mt-6 grid grid-cols-4 text-center text-[11px]" aria-label="Tahap status">
+ <ol class="relative mt-6 grid grid-cols-4 text-center text-[0.75rem]" aria-label="Tahap status">
   <span class="absolute left-[12.5%] right-[12.5%] top-5 h-1 rounded bg-slate-200" aria-hidden="true"></span>
   <span class="absolute left-[12.5%] top-5 h-1 rounded bg-moss transition-all duration-1000" style="width:{{ $step * 25 }}%" aria-hidden="true"></span>
   @foreach($steps as $i => [$ic, $s, $desc])
    <li class="relative" @if($i == $step) aria-current="step" @endif>
     <span class="relative mx-auto grid h-11 w-11 place-items-center rounded-full text-lg ring-4 ring-white transition {{ $i < $step || ($i == $step && $d) ? 'bg-moss text-white' : ($i == $step ? 'bg-white ring-moss/30 shadow-lg' : 'bg-slate-100 grayscale') }}">@if($i == $step && !$d)<span class="absolute inset-0 animate-ring rounded-full bg-moss/40"></span>@endif<span class="relative">{{ $ic }}</span></span>
-    <b class="mt-2 block {{ $i <= $step ? 'text-moss' : 'text-slate-400' }}">{{ $s }}</b><span class="hidden text-[10px] text-slate-500 sm:block">{{ $desc }}</span></li>
+    <b class="mt-2 block {{ $i <= $step ? 'text-moss' : 'text-slate-400' }}">{{ $s }}</b><span class="hidden text-[0.6875rem] text-slate-500 sm:block">{{ $desc }}</span></li>
   @endforeach
  </ol>
  @if(!$d)
@@ -72,8 +72,8 @@
  {{-- Mitra tujuan --}}
  <section class="card text-center" data-reveal>
   <div class="grid h-32 place-items-center rounded-xl bg-gradient-to-br from-green-100 to-lime-50 text-6xl" role="img" aria-label="Mitra tujuan">{{ $r->category == 'layak' ? '🏡' : '🌱' }}</div>
-  <p class="mt-3 text-[11px] text-slate-500">Mitra tujuan terdekat</p><p class="text-sm font-extrabold">{{ $r->partner?->name ?? '-' }}</p>
-  <p class="text-[11px] text-slate-500">{{ $km !== null ? ($km < 1 ? round($km * 1000).' m' : number_format($km, 1, ',', '.').' km').' dari lokasi penjemputan' : '' }}</p>
+  <p class="mt-3 text-[0.75rem] text-slate-500">Mitra tujuan terdekat</p><p class="text-sm font-extrabold">{{ $r->partner?->name ?? '-' }}</p>
+  <p class="text-[0.75rem] text-slate-500">{{ $km !== null ? ($km < 1 ? round($km * 1000).' m' : number_format($km, 1, ',', '.').' km').' dari lokasi penjemputan' : '' }}</p>
   <a class="btn btn-w mt-3" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query={{ $r->lat }},{{ $r->lng }}">📍 Lokasi penjemputan ↗</a>
  </section>
 
@@ -84,10 +84,10 @@
    <div class="mx-auto mt-2 grid h-16 w-16 place-items-center rounded-full bg-slate-100 text-3xl">{{ $isProvider ? '🧑🏽' : '🏪' }}</div>
    <p class="mt-2 text-sm font-extrabold">{{ $isProvider ? $r->volunteer_name : $r->provider_name }} <span class="text-moss">●</span></p>
    @if($contactUrl)<a class="btn mt-3 bg-[#25D366] hover:bg-[#1da851]" target="_blank" rel="noopener" href="{{ $contactUrl }}">💬 Hubungi via WhatsApp</a>
-   @else<p class="mt-3 text-[11px] text-slate-400">Nomor WhatsApp belum tersedia.</p>@endif
+   @else<p class="mt-3 text-[0.75rem] text-slate-400">Nomor WhatsApp belum tersedia.</p>@endif
   @else
    <div class="mx-auto grid h-16 w-16 animate-pulse place-items-center rounded-full bg-slate-100 text-3xl">🔎</div>
-   <p class="mt-2 text-sm font-extrabold">Mencari penerima…</p><p class="text-[11px] text-slate-500">Laporan Anda tampil di peta. Anda akan melihat nama penerima di sini setelah diklaim.</p>
+   <p class="mt-2 text-sm font-extrabold">Mencari penerima…</p><p class="text-[0.75rem] text-slate-500">Laporan Anda tampil di peta. Anda akan melihat nama penerima di sini setelah diklaim.</p>
    <a class="btn btn-w mt-3" href="{{ route('map', ['focus' => $r->id]) }}">Lihat di peta</a>
   @endif
  </section>
@@ -97,7 +97,7 @@
  <section class="card mt-6 grid items-center gap-5 md:grid-cols-[1fr_1.4fr]" data-reveal>
   @if($r->proof_path)<a href="{{ asset('storage/'.$r->proof_path) }}" target="_blank" class="block overflow-hidden rounded-xl"><img src="{{ asset('storage/'.$r->proof_path) }}" alt="Bukti penyaluran" class="h-48 w-full object-cover transition hover:scale-105"></a>@endif
   <div><h2 class="text-sm font-extrabold">💌 Pesan dari Penerima</h2>
-   @if($r->thank_note)<blockquote class="mt-2 rounded-xl bg-green-50 p-4 text-sm italic text-slate-700">“{{ $r->thank_note }}”</blockquote><p class="mt-1 text-right text-[11px] text-slate-500">— {{ $r->volunteer_name }}, {{ $r->delivered_at?->locale('id')->translatedFormat('d F Y H:i') }}</p>
+   @if($r->thank_note)<blockquote class="mt-2 rounded-xl bg-green-50 p-4 text-sm italic text-slate-700">“{{ $r->thank_note }}”</blockquote><p class="mt-1 text-right text-[0.75rem] text-slate-500">— {{ $r->volunteer_name }}, {{ $r->delivered_at?->locale('id')->translatedFormat('d F Y H:i') }}</p>
    @else<p class="mt-2 text-xs text-slate-500">Tersalurkan pada {{ $r->delivered_at?->locale('id')->translatedFormat('d F Y H:i') }}. Terima kasih atas kontribusinya!</p>@endif
    <a class="btn btn-w mt-3" href="{{ route('history') }}">🏅 Lihat lencana saya</a></div>
  </section>
@@ -117,7 +117,7 @@
    <div><label class="lbl" for="note">Ucapan terima kasih untuk pemberi (opsional)</label><textarea id="note" name="note" maxlength="200" rows="3" class="inp" placeholder="Terima kasih, makanannya sudah sampai!">{{ old('note') }}</textarea>
     <button class="btn btn-g mt-2 w-full" :disabled="busy" x-text="busy?'⏳ Mengunggah…':'✅ Selesaikan Penyaluran'">✅ Selesaikan Penyaluran</button></div>
   </form>
-  <form method="POST" action="{{ route('report.act', [$r, 'release']) }}" class="mt-3 text-right" x-data="{sure:false}" @submit="if(!sure){$event.preventDefault();sure=true}">@csrf<button class="text-[11px] font-bold text-red-600 hover:underline" x-text="sure?'Tekan sekali lagi untuk membatalkan klaim':'Batalkan klaim'">Batalkan klaim</button></form>
+  <form method="POST" action="{{ route('report.act', [$r, 'release']) }}" class="mt-3 text-right" x-data="{sure:false}" @submit="if(!sure){$event.preventDefault();sure=true}">@csrf<button class="text-[0.75rem] font-bold text-red-600 hover:underline" x-text="sure?'Tekan sekali lagi untuk membatalkan klaim':'Batalkan klaim'">Batalkan klaim</button></form>
  @endif
 </section>
 @endif

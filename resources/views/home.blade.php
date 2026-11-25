@@ -39,13 +39,19 @@
    @php $arrow = '<svg class="h-4 w-4 transition group-hover:translate-x-1" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>'; @endphp
    @php $primary = 'group inline-flex items-center gap-2 rounded-lg bg-lime-300 px-6 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#0c1f19] shadow-lg shadow-lime-300/20 transition hover:-translate-y-0.5 hover:bg-lime-200'; @endphp
    @if($role === 'provider')<a class="{{ $primary }}" href="{{ route('report.create') }}">Laporkan Surplus {!! $arrow !!}</a>
-   @elseif($role === 'recipient')<a class="{{ $primary }}" href="{{ route('map') }}">Cari Makanan {!! $arrow !!}</a>
+   @elseif($role)<a class="{{ $primary }}" href="{{ route('map') }}">{{ $role === 'processor' ? 'Cari Sisa Organik' : 'Cari Makanan' }} {!! $arrow !!}</a>
    @else<a class="{{ $primary }}" href="{{ route('register', ['role' => 'provider']) }}">Saya Punya Surplus {!! $arrow !!}</a>@endif
    <a class="inline-flex items-center gap-2 rounded-lg px-6 py-3.5 text-sm font-extrabold uppercase tracking-wide text-white ring-2 ring-white/70 transition hover:bg-white hover:text-[#0c1f19]" href="{{ route('map') }}">Lihat Peta</a>
   </div>
+  <a href="{{ route('about') }}" class="mt-8 inline-flex animate-rise flex-wrap items-center gap-2 text-xs font-semibold text-white/80 transition hover:text-white [animation-delay:.4s]" aria-label="Lihat kontribusi FoodLoop pada SDG 2 dan SDG 12">
+   <span>Mendukung</span>
+   <span class="inline-flex items-center gap-1.5 rounded-md bg-[#DDA63A] py-0.5 pl-0.5 pr-2 font-extrabold text-[#0c1f19]"><span class="grid h-5 w-5 place-items-center rounded bg-[#0c1f19]/15 text-[0.6875rem]">2</span>Zero Hunger</span>
+   <span class="inline-flex items-center gap-1.5 rounded-md bg-[#BF8B2E] py-0.5 pl-0.5 pr-2 font-extrabold text-[#0c1f19]"><span class="grid h-5 w-5 place-items-center rounded bg-[#0c1f19]/15 text-[0.6875rem]">12</span>Responsible Consumption</span>
+   <span class="underline underline-offset-2">Pelajari →</span>
+  </a>
  </div>
 
- <a href="#fitur" class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-[10px] font-bold uppercase tracking-[.2em] text-white/70 transition hover:text-white md:flex" aria-label="Gulir ke bawah">Gulir<span class="h-8 w-[2px] overflow-hidden rounded bg-white/20"><span class="block h-3 w-full animate-[scrollcue_1.6s_ease-in-out_infinite] bg-lime-300"></span></span></a>
+ <a href="#fitur" class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-[0.6875rem] font-bold uppercase tracking-[.2em] text-white/70 transition hover:text-white md:flex" aria-label="Gulir ke bawah">Gulir<span class="h-8 w-[2px] overflow-hidden rounded bg-white/20"><span class="block h-3 w-full animate-[scrollcue_1.6s_ease-in-out_infinite] bg-lime-300"></span></span></a>
 </section>
 
 {{-- TIGA PILAR: foto penuh kedua --}}
@@ -69,6 +75,20 @@
  </div>
 </section>
 
+{{-- URGENSI: data masalah --}}
+<section class="bg-lime-300 text-[#0c1f19]" aria-labelledby="urg-title">
+ <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 lg:grid-cols-[1.1fr_2fr]">
+  <div data-reveal><p class="text-[0.75rem] font-extrabold uppercase tracking-[.2em]">Mengapa mendesak</p><h2 id="urg-title" class="mt-2 text-3xl font-extrabold leading-tight">Indonesia membuang hingga 48 juta ton makanan per tahun.</h2>
+   <p class="mt-2 text-[0.75rem] font-semibold text-[#0c1f19]/70">Sumber: Bappenas, Kajian Food Loss and Waste di Indonesia (2021).</p>
+   <a href="{{ route('about') }}" class="mt-4 inline-flex items-center gap-1 text-sm font-extrabold underline underline-offset-4">Lihat data &amp; kontribusi SDG →</a></div>
+  <dl class="grid gap-6 sm:grid-cols-3">
+   @foreach([['115–184 kg', 'makanan terbuang per orang per tahun'], ['Rp213–551 T', 'kerugian ekonomi setiap tahun'], ['61–125 jt', 'orang yang sebenarnya bisa diberi makan']] as [$v, $l])
+    <div class="border-l-[3px] border-[#0c1f19] pl-4" data-reveal style="transition-delay:{{ $loop->index * 100 }}ms"><dd class="text-3xl font-extrabold">{{ $v }}</dd><dt class="mt-1 text-xs font-semibold">{{ $l }}</dt></div>
+   @endforeach
+  </dl>
+ </div>
+</section>
+
 {{-- STATISTIK --}}
 <section class="mx-auto mt-8 max-w-6xl px-4" data-reveal>
  <div class="grid gap-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5 sm:grid-cols-4">
@@ -78,7 +98,7 @@
    [$t['co2_ton'], 2, 'ton', 'CO₂e dicegah', '<path d="M7 18a4.5 4.5 0 1 1 .6-8.96A6 6 0 0 1 19 11a3.5 3.5 0 0 1-.5 7z"/><path d="M9 14l2 2 4-4"/>'],
    [$t['partners'], 0, 'mitra', 'Mitra penerima & pengolah', '<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/>'],
   ] as [$v, $d, $s, $l, $i])
-   <div class="flex items-center gap-3 sm:block"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-moss/10 text-moss sm:mb-2"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $i !!}</svg></span><div><b class="text-2xl text-slate-900"><span data-count="{{ $v }}" data-decimals="{{ $d }}">{{ number_format($v, $d, ',', '.') }}</span> <span class="text-sm text-moss">{{ $s }}</span></b><div class="text-[11px] text-slate-500">{{ $l }}</div></div></div>
+   <div class="flex items-center gap-3 sm:block"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-moss/10 text-moss sm:mb-2"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $i !!}</svg></span><div><b class="text-2xl text-slate-900"><span data-count="{{ $v }}" data-decimals="{{ $d }}">{{ number_format($v, $d, ',', '.') }}</span> <span class="text-sm text-moss">{{ $s }}</span></b><div class="text-[0.75rem] text-slate-500">{{ $l }}</div></div></div>
   @endforeach
  </div>
 </section>
@@ -113,7 +133,7 @@
    @foreach($steps as $i => [$ic, $a, $b])
     <li class="relative rounded-2xl {{ $bg }} p-5 text-center">
      @if($i < 3)<span class="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 text-xl {{ $tx }} sm:block" aria-hidden="true">›</span>@endif
-     <div class="text-3xl">{{ $ic }}</div><div class="mt-1 text-[10px] font-bold {{ $tx }}">LANGKAH {{ $i + 1 }}</div><b class="text-sm">{{ $a }}</b><p class="mt-1 text-[11px] text-slate-500">{{ $b }}</p></li>
+     <div class="text-3xl">{{ $ic }}</div><div class="mt-1 text-[0.6875rem] font-bold {{ $tx }}">LANGKAH {{ $i + 1 }}</div><b class="text-sm">{{ $a }}</b><p class="mt-1 text-[0.75rem] text-slate-500">{{ $b }}</p></li>
    @endforeach
   </ol>
  @endforeach
@@ -128,7 +148,7 @@
   <ul class="mt-3 divide-y divide-slate-100">
    @forelse($recent as $r)
     @php $ic = ['waiting' => '🆕', 'claimed' => '🙋', 'on_the_way' => '🚚', 'delivered' => '✅'][$r->status] ?? '•'; @endphp
-    <li class="flex items-center gap-3 py-2.5 text-xs"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-50">{{ $ic }}</span><span class="min-w-0 flex-1"><b class="block truncate">{{ $r->title }}</b><span class="text-slate-500">{{ $r->provider_name }} · {{ $r->status_label }}</span></span><span class="shrink-0 text-[10px] text-slate-400">{{ $r->updated_at->locale('id')->diffForHumans() }}</span></li>
+    <li class="flex items-center gap-3 py-2.5 text-xs"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-50">{{ $ic }}</span><span class="min-w-0 flex-1"><b class="block truncate">{{ $r->title }}</b><span class="text-slate-500">{{ $r->provider_name }} · {{ $r->status_label }}</span></span><span class="shrink-0 text-[0.6875rem] text-slate-400">{{ $r->updated_at->locale('id')->diffForHumans() }}</span></li>
    @empty<li class="py-3 text-xs text-slate-500">Belum ada aktivitas.</li>@endforelse
   </ul></div>
 </section>
@@ -139,10 +159,10 @@
   <div data-reveal><span class="chip bg-white/15">🧮 Simulator Dampak</span><h2 class="mt-2 text-2xl font-extrabold">Berapa dampak dari surplus Anda?</h2><p class="mt-2 text-xs text-white/80">Geser untuk memperkirakan berapa porsi yang bisa disalurkan dan emisi yang dicegah dari makanan yang biasanya terbuang setiap minggu.</p>
    <label for="sim" class="mt-6 block text-xs font-bold">Surplus per minggu: <span class="text-lg text-lime-300" x-text="kg+' kg'"></span></label>
    <input id="sim" type="range" min="1" max="200" x-model.number="kg" class="mt-2 w-full accent-lime-400">
-   <div class="flex justify-between text-[10px] text-white/60"><span>1 kg</span><span>Restoran kecil ~10 kg</span><span>Hotel ~100 kg</span><span>200 kg</span></div></div>
+   <div class="flex justify-between text-[0.6875rem] text-white/60"><span>1 kg</span><span>Restoran kecil ~10 kg</span><span>Hotel ~100 kg</span><span>200 kg</span></div></div>
   <div class="grid grid-cols-2 gap-3" data-reveal>
    @foreach([["Math.round(kg/$K).toLocaleString('id-ID')", 'porsi / minggu', '🍱'], ["(kg*$C).toLocaleString('id-ID',{maximumFractionDigits:1})", 'kg CO₂e dicegah', '🌍'], ["Math.round(kg*$C/$CAR).toLocaleString('id-ID')", 'km perjalanan mobil setara', '🚗'], ["(kg*$C*52/$TREE).toLocaleString('id-ID',{maximumFractionDigits:0})", 'pohon setara / tahun', '🌳']] as [$expr, $l, $i])
-    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/10 backdrop-blur transition hover:bg-white/15"><div class="text-2xl">{{ $i }}</div><b class="text-2xl" x-text="{{ $expr }}"></b><div class="text-[11px] text-white/70">{{ $l }}</div></div>
+    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/10 backdrop-blur transition hover:bg-white/15"><div class="text-2xl">{{ $i }}</div><b class="text-2xl" x-text="{{ $expr }}"></b><div class="text-[0.75rem] text-white/70">{{ $l }}</div></div>
    @endforeach
   </div>
  </div>

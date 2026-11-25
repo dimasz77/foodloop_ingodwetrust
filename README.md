@@ -119,6 +119,9 @@ Semua akun memakai kata sandi **`password`**. Di halaman Masuk juga ada tombol i
 | Pemberi Makanan | `italy@foodloop.test`, `sunhotel@foodloop.test`, `bakery@foodloop.test`, `katering@foodloop.test` | sama seperti di atas |
 | Penerima Makanan | `relawan@foodloop.test` | Klaim makanan di peta, hubungi pemberi, unggah bukti |
 | Penerima Makanan | `panti@foodloop.test` | sama seperti di atas |
+| Mitra Pengolah Organik | `bsf@foodloop.test` | Klaim sisa organik untuk diolah menjadi pakan maggot BSF/kompos |
+
+> Akun `bsf@foodloop.test` baru ada setelah database di-reset (`php artisan migrate:fresh --seed`). Panduan lengkap untuk juri ada di halaman **Tentang** (`/tentang#uji`).
 
 **Coba alur lengkap:** masuk sebagai pemberi → **Lapor** → keluar → masuk sebagai penerima → **Peta** → klaim → **Klaim Saya** → unggah foto bukti → masuk lagi sebagai pemberi dan lihat pesan terima kasih.
 
@@ -149,6 +152,12 @@ php artisan test
 ## 7. Fitur & Struktur Proyek
 
 ### Fitur
+
+- **Selaras SDG 2 (Zero Hunger) & SDG 12 (Responsible Consumption):** halaman Tentang memetakan setiap fitur ke target 2.1, 12.3, dan 12.5 dengan capaian yang dihitung langsung dari data.
+- **Tiga peran:** Pemberi Makanan, Penerima Makanan, dan Mitra Pengolah Organik. Makanan layak hanya bisa diklaim penerima; sisa organik hanya oleh pengolah.
+- **Notifikasi darurat** di browser saat muncul makanan baru yang bisa diklaim.
+- **PWA:** bisa dipasang di layar utama ponsel dan punya halaman offline.
+- **Panel aksesibilitas:** ukuran teks, kontras tinggi, garis bawah tautan, dan kurangi animasi (tombol bulat di kiri bawah).
 
 - **Dua peran:** Pemberi Makanan & Penerima Makanan, dengan menu yang berbeda.
 - **Lapor surplus** dengan checklist kelayakan yang menentukan jalur **Human-First** (ke manusia) atau **Earth-First** (ke kompos/maggot).

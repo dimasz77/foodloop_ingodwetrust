@@ -6,6 +6,10 @@
 <x-page-hero image="peta.jpg" eyebrow="Peta Penyelamatan" title="Temukan Makanan di Sekitar Anda" subtitle="Klaim penjemputan, hubungi pemberi, dan salurkan sebelum batas waktu berakhir." :crumbs="['Peta' => null]">
  <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold ring-1 ring-white/20 backdrop-blur" role="status"><span class="h-2 w-2 animate-pulse rounded-full bg-lime-300"></span><span id="upd">Data langsung · diperbarui otomatis</span></span>
  @guest<a class="btn btn-lime" href="{{ route('login') }}">Masuk untuk klaim</a>@endguest
+ @auth @unless(auth()->user()->isProvider())
+  <button id="notif" type="button" class="btn btn-lime" aria-describedby="notif-hint"><svg class="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a4 4 0 0 1 8 0c0 3 1.5 4 1.5 4h-11S4 10 4 7zM6.5 13.5a1.5 1.5 0 0 0 3 0"/></svg><span>Aktifkan Notifikasi Darurat</span></button>
+  <span id="notif-hint" class="text-xs text-white/70">Kabari saya saat ada makanan baru yang bisa saya klaim.</span>
+ @endunless @endauth
 </x-page-hero>
 
 <section class="pull-up mx-auto max-w-6xl px-4">
@@ -22,7 +26,7 @@
   <div class="relative overflow-hidden rounded-2xl ring-1 ring-black/10">
    <div id="map" class="h-[420px] md:h-[480px]" role="application" aria-label="Peta makanan surplus"></div>
    <button id="me" type="button" class="absolute right-3 top-3 z-[500] rounded-lg bg-white px-3 py-2 text-xs font-bold shadow transition hover:bg-slate-50" aria-label="Pusatkan ke lokasi saya">🎯 Lokasi saya</button>
-   <div class="absolute bottom-3 left-3 z-[500] rounded-lg bg-white/95 p-2 text-[10px] shadow"><b>LEGENDA</b><br><i class="mr-1 inline-block h-2 w-2 rounded-full bg-[#047857]"></i>Layak Konsumsi<br><i class="mr-1 inline-block h-2 w-2 rounded-full bg-[#f59e0b]"></i>Sisa Organik (Kompos)<br><i class="mr-1 inline-block h-2 w-2 rounded-full bg-[#dc2626]"></i>Segera Kedaluwarsa<br>🏠 Mitra penerima · ♻️ Pengolah organik</div>
+   <div class="absolute bottom-3 left-3 z-[500] rounded-lg bg-white/95 p-2 text-[0.6875rem] shadow"><b>LEGENDA</b><br><i class="mr-1 inline-block h-2 w-2 rounded-full bg-[#047857]"></i>Layak Konsumsi<br><i class="mr-1 inline-block h-2 w-2 rounded-full bg-[#f59e0b]"></i>Sisa Organik (Kompos)<br><i class="mr-1 inline-block h-2 w-2 rounded-full bg-[#dc2626]"></i>Segera Kedaluwarsa<br>🏠 Mitra penerima · ♻️ Pengolah organik</div>
   </div>
   <aside class="flex max-h-[480px] flex-col rounded-2xl bg-white shadow-sm ring-1 ring-black/5" aria-label="Daftar makanan">
    <div class="flex items-center justify-between border-b px-4 py-3"><b class="text-xs">Makanan tersedia</b><span id="cnt" class="chip bg-moss/10 text-moss">0</span></div>
@@ -72,7 +76,7 @@ function draw(){layer.clearLayers();const list=filtered();
  $('cnt').textContent=list.length;
  $('list').innerHTML=list.length?list.map(p=>`<li><button type="button" data-id="${p.id}" class="flex w-full gap-3 px-4 py-3 text-left text-xs transition hover:bg-slate-50 ${p.id==sel?'bg-moss/5 ring-2 ring-inset ring-moss/30':''}">
   <span class="mt-1 h-3 w-3 shrink-0 rounded-full ${p.urgent?'animate-pulse':''}" style="background:${p.color}"></span>
-  <span class="min-w-0 flex-1"><b class="block truncate">${esc(p.title)}</b><span class="text-slate-500">${esc(p.provider)} · ${dist(p.d)}</span><span class="mt-1 flex flex-wrap items-center gap-1"><span class="chip ${statusChip[p.status]||'bg-slate-100'}">${esc(p.label)}</span><span class="font-mono text-[10px] ${p.urgent?'font-bold text-red-600':'text-slate-400'}" data-exp="${p.expires}">--:--:--</span></span></span></button></li>`).join('')
+  <span class="min-w-0 flex-1"><b class="block truncate">${esc(p.title)}</b><span class="text-slate-500">${esc(p.provider)} · ${dist(p.d)}</span><span class="mt-1 flex flex-wrap items-center gap-1"><span class="chip ${statusChip[p.status]||'bg-slate-100'}">${esc(p.label)}</span><span class="font-mono text-[0.6875rem] ${p.urgent?'font-bold text-red-600':'text-slate-400'}" data-exp="${p.expires}">--:--:--</span></span></span></button></li>`).join('')
   :'<li class="p-6 text-center text-xs text-slate-500">🔍 Tidak ada makanan yang cocok dengan filter.<br>Coba perluas radius atau hapus filter.</li>';
  $('list').querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',()=>pick(+b.dataset.id,true)))}
 
@@ -82,14 +86,15 @@ $('me').addEventListener('click',()=>locate(true));
 
 function act(p,a,l,cls=''){return `<form method="POST" action="${base}/${p.id}/${a}" class="mt-2"><input type="hidden" name="_token" value="${csrf}"><button class="btn w-full ${cls}">${l}</button></form>`}
 function actions(p){
- if(!role)return `<a class="btn btn-g mt-3 w-full py-3" href="${loginUrl}">Masuk sebagai penerima untuk klaim</a>`;
+ if(!role)return `<a class="btn btn-g mt-3 w-full py-3" href="${loginUrl}">Masuk untuk mengklaim</a>`;
  let h='';
- if(role=='recipient'){
-  if(p.status=='waiting')h+=act(p,'claim','🙋 Klaim Makanan Ini','btn-g py-3 text-sm');
+ if(role!='provider'){
+  if(p.status=='waiting'&&p.canClaim)h+=act(p,'claim',p.category=='layak'?'Klaim Makanan Ini':'Klaim untuk Diolah','btn-g py-3 text-sm');
+  else if(p.status=='waiting')h+=`<p class="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">${p.category=='layak'?'Makanan layak konsumsi hanya dapat diklaim oleh <b>Penerima Makanan</b>.':'Sisa organik hanya dapat diklaim oleh <b>Mitra Pengolah Organik</b> (BSF/kompos).'}</p>`;
   else if(p.claimedByMe){
    if(p.contact)h+=`<a class="btn mt-2 w-full bg-[#25D366] hover:bg-[#1da851]" target="_blank" rel="noopener" href="${esc(p.contact)}">💬 Hubungi Pemberi via WhatsApp</a>`;
    if(p.status=='claimed')h+=act(p,'start','🚚 Mulai Antar');
-   h+=`<form method="POST" action="${base}/${p.id}/release" class="mt-2" onsubmit="return confirmRelease(this)"><input type="hidden" name="_token" value="${csrf}"><button class="w-full text-center text-[11px] font-bold text-red-600 hover:underline">Batalkan klaim</button></form>`;
+   h+=`<form method="POST" action="${base}/${p.id}/release" class="mt-2" onsubmit="return confirmRelease(this)"><input type="hidden" name="_token" value="${csrf}"><button class="w-full text-center text-[0.75rem] font-bold text-red-600 hover:underline">Batalkan klaim</button></form>`;
   } else h+='<p class="mt-2 rounded-lg bg-slate-50 p-2 text-xs text-slate-500">Sedang diproses relawan lain.</p>';
  } else {
   h+='<p class="mt-2 rounded-lg bg-slate-50 p-2 text-xs text-slate-500">Anda masuk sebagai pemberi makanan. Hanya penerima yang dapat mengklaim.</p>';
@@ -116,8 +121,8 @@ function pick(id,fly){sel=id;const p=pins.find(x=>x.id==id);if(!p)return;draw();
  <h2 class="mt-2 text-lg font-extrabold">${esc(p.title)}</h2>
  <div class="mt-2 grid grid-cols-3 gap-2 text-center text-xs"><div class="rounded-lg bg-slate-50 p-2"><b class="block text-base">${p.portions||'-'}</b>porsi</div><div class="rounded-lg bg-slate-50 p-2"><b class="block text-base">${String(p.kg).replace('.',',')}</b>kg</div><div class="rounded-lg bg-slate-50 p-2"><b class="block text-base">${String(p.co2e).replace('.',',')}</b>kg CO₂e</div></div>
  <p class="mt-3 text-xs text-slate-600">🏪 ${esc(p.provider)}<br>📍 ${dist(d)} dari lokasi Anda<br>🎯 Tujuan: ${esc(p.partner||'-')}</p>
- ${p.description?`<p class="mt-2 whitespace-pre-line rounded-lg bg-slate-50 p-2 text-[11px] text-slate-600">${esc(p.description)}</p>`:''}
- <div class="mt-3 rounded-xl ${p.urgent?'bg-red-50':'bg-green-50'} p-3 text-center"><div class="text-[10px] font-bold ${p.urgent?'text-red-700':'text-moss'}">⏱ Batas waktu pengambilan</div><div class="font-mono text-2xl font-extrabold"><span id="ch">00</span> : <span id="cm">00</span> : <span id="cs">00</span></div><div class="flex justify-around text-[9px] text-slate-500"><span>Jam</span><span>Menit</span><span>Detik</span></div></div>
+ ${p.description?`<p class="mt-2 whitespace-pre-line rounded-lg bg-slate-50 p-2 text-[0.75rem] text-slate-600">${esc(p.description)}</p>`:''}
+ <div class="mt-3 rounded-xl ${p.urgent?'bg-red-50':'bg-green-50'} p-3 text-center"><div class="text-[0.6875rem] font-bold ${p.urgent?'text-red-700':'text-moss'}">⏱ Batas waktu pengambilan</div><div class="font-mono text-2xl font-extrabold"><span id="ch">00</span> : <span id="cm">00</span> : <span id="cs">00</span></div><div class="flex justify-around text-[0.625rem] text-slate-500"><span>Jam</span><span>Menit</span><span>Detik</span></div></div>
  <p class="mt-2 text-xs">Status: <span class="chip ${statusChip[p.status]||'bg-slate-100'}">${esc(p.label)}</span></p>
  ${actions(p)}</div></div>
  <div class="mt-5 flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-extrabold">Navigasi</h3><p class="text-xs text-slate-500">Ikuti rute terbaik untuk mengambil makanan sebelum batas waktu berakhir.</p></div><a class="btn btn-w" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=${user.lat},${user.lng}&destination=${p.lat},${p.lng}">Buka Google Maps ↗</a></div>
@@ -126,20 +131,40 @@ function pick(id,fly){sel=id;const p=pins.find(x=>x.id==id);if(!p)return;draw();
  fly&&$('det').scrollIntoView({behavior:'smooth',block:'start'})}
 
 /* Pembaruan berkala tanpa memuat ulang halaman */
-async function refresh(){try{const r=await fetch(pinsUrl,{headers:{Accept:'application/json'}});if(!r.ok)return;const j=await r.json();pins=j.pins;
+/* Notifikasi darurat: beri tahu saat muncul makanan baru (atau menjadi darurat) yang bisa diklaim pengguna ini */
+const notifKey='fl-notif',claimable=p=>p.canClaim&&p.status=='waiting';
+let known=new Map(pins.map(p=>[p.id,p.urgent]));
+const notifOn=()=>{try{return 'Notification' in window&&Notification.permission==='granted'&&localStorage.getItem(notifKey)==='1'}catch(e){return false}};
+function syncNotifBtn(){const b=$('notif');if(!b)return;const on=notifOn();b.querySelector('span').textContent=on?'Notifikasi Aktif · Matikan':'Aktifkan Notifikasi Darurat';b.setAttribute('aria-pressed',on);b.classList.toggle('btn-lime',!on);b.classList.toggle('btn-w',on)}
+$('notif')?.addEventListener('click',async()=>{
+ if(!('Notification' in window)){$('notif-hint').textContent='Browser ini belum mendukung notifikasi.';return}
+ if(notifOn()){localStorage.setItem(notifKey,'0');syncNotifBtn();return}
+ const perm=await Notification.requestPermission();
+ if(perm==='granted'){localStorage.setItem(notifKey,'1');new Notification('Notifikasi FoodLoop aktif',{body:'Kami akan memberi tahu saat ada makanan baru yang bisa Anda klaim.',icon:'{{ asset('icons/icon-192.png') }}'})}
+ else $('notif-hint').textContent='Izin notifikasi ditolak. Aktifkan lewat pengaturan situs di browser.';
+ syncNotifBtn()});
+function notifyNew(){
+ const fresh=pins.filter(p=>claimable(p)&&(!known.has(p.id)||(p.urgent&&!known.get(p.id))));
+ known=new Map(pins.map(p=>[p.id,p.urgent]));
+ if(!notifOn())return;
+ fresh.slice(0,3).forEach(p=>{const n=new Notification((p.urgent?'⏱ Darurat: ':'Baru: ')+p.title,{body:`${p.provider} · ${dist(km(user.lat,user.lng,p.lat,p.lng))} · ${p.portions?p.portions+' porsi':p.kg+' kg'}`,icon:'{{ asset('icons/icon-192.png') }}',tag:'fl-'+p.id});n.onclick=()=>{window.focus();pick(p.id,true);n.close()}});
+}
+async function refresh(){try{const r=await fetch(pinsUrl,{headers:{Accept:'application/json'}});if(!r.ok)return;const j=await r.json();pins=j.pins;notifyNew();
  $('upd').textContent='Diperbarui '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
  const p=pins.find(x=>x.id==sel);
  if(sel&&!p){sel=null;$('det').innerHTML='<div class="card text-xs text-slate-500">Makanan yang Anda lihat sudah tidak tersedia.</div>';routes.forEach(r=>r.remove())}
  else if(p&&p.status+p.claimedByMe!==lastSig&&!$('det').contains(document.activeElement))pick(sel);
  draw()}catch(e){}}
-setInterval(()=>document.visibilityState==='visible'&&refresh(),30000);
+/* Tab aktif: tiap 30 detik. Tab di latar belakang: tiap 60 detik hanya jika notifikasi aktif. */
+let ticks=0;setInterval(()=>{ticks++;if(document.visibilityState==='visible'||(notifOn()&&ticks%2===0))refresh()},30000);
 
 /* Reset filter (kontrol pengguna) & pintasan keyboard (efisiensi) */
 const syncReset=()=>{$('reset').hidden=!($('q').value||$('c').value||$('r').value||$('u').checked)};
 ['input','change'].forEach(e=>['q','c','u','r'].forEach(i=>$(i).addEventListener(e,()=>{draw();syncReset()})));
 $('reset').addEventListener('click',()=>{$('q').value='';$('c').value='';$('r').value='';$('u').checked=false;draw();syncReset();$('q').focus()});
 document.addEventListener('keydown',e=>{const t=e.target.tagName;if(e.key=='/'&&!['INPUT','TEXTAREA','SELECT'].includes(t)){e.preventDefault();$('q').focus()}if(e.key=='Escape'&&e.target.id=='q'){$('q').value='';draw();syncReset()}});
-setUser();locate(false);
+if(role=='processor'){$('c').value='organik';syncReset()}
+syncNotifBtn();setUser();locate(false);
 focusId&&pins.some(p=>p.id==focusId)&&pick(focusId,true);
 </script>@endpush
 @endsection

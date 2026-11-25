@@ -34,6 +34,13 @@ class FoodLoopFlowTest extends TestCase
         $this->get(route('impact'))->assertOk()->assertSee('Makanan Tersalurkan per Bulan');
         $this->get(route('login'))->assertOk();
         $this->get(route('register'))->assertOk();
+        $this->get(route('about'))->assertOk()->assertSee('Kontribusi pada SDGs')->assertSee('Panduan uji coba');
+    }
+
+    public function test_login_prefills_only_demo_accounts(): void
+    {
+        $this->get(route('login', ['demo' => 'bsf@foodloop.test']))->assertOk()->assertSee('Akun demo sudah terisi');
+        $this->get(route('login', ['demo' => 'someone@example.com']))->assertOk()->assertDontSee('Akun demo sudah terisi');
     }
 
     public function test_map_pins_endpoint_hides_contact_until_claimed(): void
@@ -64,6 +71,34 @@ class FoodLoopFlowTest extends TestCase
 
         $this->actingAs($second)->post(route('report.act', [$report, 'claim']))->assertSessionHasErrors('claim');
         $this->assertSame($first->id, $report->fresh()->recipient_id);
+    }
+
+    public function test_organic_waste_is_claimable_only_by_processor(): void
+    {
+        $report = $this->makeReport(User::factory()->provider()->create(), ['category' => 'organik']);
+
+        $this->actingAs(User::factory()->recipient()->create())->post(route('report.act', [$report, 'claim']))->assertForbidden();
+
+        $processor = User::factory()->create(['role' => 'processor', 'organization' => 'BSF Farm']);
+        $this->actingAs($processor)->post(route('report.act', [$report, 'claim']))->assertRedirect(route('status', ['id' => $report->id]));
+        $this->assertSame($processor->id, $report->fresh()->recipient_id);
+    }
+
+    public function test_processor_cannot_claim_food_fit_for_people(): void
+    {
+        $report = $this->makeReport(User::factory()->provider()->create());
+
+        $this->actingAs(User::factory()->create(['role' => 'processor']))->post(route('report.act', [$report, 'claim']))->assertForbidden();
+    }
+
+    public function test_user_can_register_as_processor(): void
+    {
+        $this->post(route('register'), [
+            'role' => 'processor', 'name' => 'Rina', 'organization' => 'Rumah Kompos', 'email' => 'rina@example.test',
+            'password' => 'rahasia', 'password_confirmation' => 'rahasia',
+        ])->assertRedirect(route('map'));
+
+        $this->assertSame('processor', User::where('email', 'rina@example.test')->value('role'));
     }
 
     public function test_recipient_can_release_claim(): void

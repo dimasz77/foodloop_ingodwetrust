@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             User::create(['name' => 'Budiman Pekerti', 'organization' => 'Relawan FoodLoop', 'email' => 'relawan@foodloop.test', 'password' => 'password', 'role' => 'recipient', 'phone' => '081311111111']),
             User::create(['name' => 'Panti Asuhan Kasih', 'organization' => 'Panti Asuhan Kasih', 'email' => 'panti@foodloop.test', 'password' => 'password', 'role' => 'recipient', 'phone' => '081322222222']),
         ];
+        $processor = User::create(['name' => 'BSF Farm Tangerang', 'organization' => 'BSF Farm Tangerang', 'email' => 'bsf@foodloop.test', 'password' => 'password', 'role' => 'processor', 'phone' => '081333333333']);
 
         foreach ([
             ['Panti Asuhan Kasih', 'layak', 'Jakarta Selatan', -6.2600, 106.8100], ['Panti Jompo Sejahtera', 'layak', 'Jakarta Timur', -6.2300, 106.9000],
@@ -51,8 +52,8 @@ class DatabaseSeeder extends Seeder
             Report::create(['title' => 'Penyaluran '.($i + 1), 'provider_name' => $p, 'provider_id' => $prov[$p]->id, 'category' => $c, 'portions' => $por, 'weight_kg' => $kg, 'urgent' => $u,
                 'expires_at' => now()->subDays(($i + 1) * 25), 'delivered_at' => now()->subDays(($i + 1) * 25)->addHours(2), 'lat' => -6.22, 'lng' => 106.82,
                 'status' => 'delivered', 'partner_id' => Partner::nearest($c, -6.22, 106.82)->id,
-                'recipient_id' => $rec[$i % 2]->id, 'volunteer_name' => $rec[$i % 2]->name,
-                'thank_note' => ['Terima kasih! Anak-anak panti sangat senang.', null, 'Sudah kami olah jadi pakan maggot, terima kasih.'][$i % 3]]);
+                'recipient_id' => ($c === 'organik' ? $processor : $rec[$i % 2])->id, 'volunteer_name' => ($c === 'organik' ? $processor : $rec[$i % 2])->name,
+                'thank_note' => $c === 'organik' ? 'Sudah kami olah jadi pakan maggot, terima kasih.' : ['Terima kasih! Anak-anak panti sangat senang.', null][$i % 2]]);
         }
     }
 }

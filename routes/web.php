@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/impact', [PageController::class, 'impact'])->name('impact');
+Route::get('/tentang', [PageController::class, 'about'])->name('about');
 Route::get('/map', [ReportController::class, 'map'])->name('map');
 Route::get('/map/pins', [ReportController::class, 'pins'])->name('map.pins');
 

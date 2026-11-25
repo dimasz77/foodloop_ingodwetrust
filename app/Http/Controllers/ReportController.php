@@ -109,7 +109,9 @@ class ReportController extends Controller
         $u = $r->user();
         switch ($action) {
             case 'claim':
-                abort_unless($u->role === 'recipient', 403, 'Hanya penerima makanan yang dapat mengklaim.');
+                abort_unless($u->canClaim($report), 403, $report->category === 'layak'
+                    ? 'Makanan layak konsumsi hanya dapat diklaim oleh Penerima Makanan.'
+                    : 'Sisa organik hanya dapat diklaim oleh Mitra Pengolah Organik.');
                 $claimed = Report::whereKey($report->id)->where('status', 'waiting')
                     ->update(['status' => 'claimed', 'recipient_id' => $u->id, 'volunteer_name' => $u->name, 'updated_at' => now()]);
                 if ($claimed === 0) {

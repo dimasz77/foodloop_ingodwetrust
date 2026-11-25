@@ -30,4 +30,15 @@ class PageController extends Controller
             'pending' => (float) Report::where('status', '!=', 'delivered')->sum('weight_kg'),
         ]);
     }
+
+    /** Halaman penjelasan masalah, pemetaan SDG, pembeda solusi, dan panduan uji coba. */
+    public function about()
+    {
+        $t = I::totals();
+
+        return view('about', [
+            't' => $t,
+            'organicKg' => (float) Report::where('status', 'delivered')->where('category', 'organik')->sum('weight_kg'),
+        ]);
+    }
 }

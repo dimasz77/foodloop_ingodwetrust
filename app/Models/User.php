@@ -47,8 +47,29 @@ class User extends Authenticatable
         return 'https://wa.me/'.$digits.($message !== '' ? '?text='.rawurlencode($message) : '');
     }
 
+    /** @var array<string, string> Peran pengguna beserta labelnya. */
+    public const ROLES = [
+        'provider' => 'Pemberi Makanan',
+        'recipient' => 'Penerima Makanan',
+        'processor' => 'Mitra Pengolah Organik',
+    ];
+
     public function isProvider(): bool
     {
         return $this->role === 'provider';
+    }
+
+    public function roleLabel(): string
+    {
+        return self::ROLES[$this->role] ?? $this->role;
+    }
+
+    /**
+     * Makanan layak konsumsi hanya untuk penerima (Human-First),
+     * sisa organik hanya untuk mitra pengolah BSF/kompos (Earth-First).
+     */
+    public function canClaim(Report $report): bool
+    {
+        return $report->category === 'layak' ? $this->role === 'recipient' : $this->role === 'processor';
     }
 }
