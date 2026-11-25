@@ -29,4 +29,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Tautan wa.me untuk menghubungi pengguna ini, atau null jika nomornya kosong.
+     * Nomor lokal "08xx" diubah ke format internasional "628xx".
+     */
+    public function whatsappUrl(string $message = ''): ?string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $this->phone);
+        if ($digits === '') {
+            return null;
+        }
+        if (str_starts_with($digits, '0')) {
+            $digits = '62'.substr($digits, 1);
+        }
+
+        return 'https://wa.me/'.$digits.($message !== '' ? '?text='.rawurlencode($message) : '');
+    }
+
+    public function isProvider(): bool
+    {
+        return $this->role === 'provider';
+    }
 }

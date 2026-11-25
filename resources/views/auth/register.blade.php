@@ -1,17 +1,20 @@
 @extends('layout')
 @section('title','Daftar')
 @section('content')
-<div class="mx-auto mt-10 max-w-lg px-4"><form method="POST" action="{{ route('register') }}" class="card space-y-4" x-data="{role:'{{ old('role',$role) }}'}">@csrf
- <h1 class="h2">Daftar sebagai</h1>
+<x-page-hero eyebrow="Daftar" title="Bergabung dengan FoodLoop" subtitle="Pilih peran Anda dalam siklus penyelamatan pangan. Gratis, kurang dari satu menit." :crumbs="['Daftar' => null]" compact />
+<div class="pull-up mx-auto max-w-lg px-4"><form method="POST" action="{{ route('register') }}" class="card space-y-4 shadow-xl" x-data="{role:@js(old('role', $role)),pw:'',pc:'',show:false,busy:false,get score(){let s=0;if(this.pw.length>=6)s++;if(this.pw.length>=10)s++;if(/[A-Z]/.test(this.pw)&&/[a-z]/.test(this.pw))s++;if(/\d/.test(this.pw)&&/[^A-Za-z0-9]/.test(this.pw))s++;return s}}" @submit="busy=true">@csrf
+ <h2 class="sec"><span class="h-[3px] w-8 rounded bg-moss"></span>Saya ingin menjadi</h2>
  <div class="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Pilih peran">
-  @foreach(['provider'=>['🍽️','Pemberi Makanan','Restoran, hotel, katering, event/kampus yang memiliki surplus'],'recipient'=>['🤝','Penerima Makanan','Relawan, panti, dapur umum, atau pengolah organik']] as $v=>[$i,$t,$d])
-  <label class="cursor-pointer rounded-xl border-2 p-3 text-center text-xs" :class="role=='{{ $v }}'?'border-teal2 bg-green-50':'border-slate-200'"><input class="sr-only" type="radio" name="role" value="{{ $v }}" x-model="role"><div class="text-2xl">{{ $i }}</div><b>{{ $t }}</b><div class="text-[10px] text-slate-500">{{ $d }}</div></label>@endforeach</div>
- <div class="grid gap-3 sm:grid-cols-2"><div><label class="lbl" for="n">Nama lengkap</label><input id="n" name="name" required class="inp" value="{{ old('name') }}"></div>
+  @foreach(['provider' => ['🍽️', 'Pemberi Makanan', 'Restoran, hotel, katering, event/kampus yang memiliki surplus'], 'recipient' => ['🤝', 'Penerima Makanan', 'Relawan, panti, dapur umum, atau pengolah organik']] as $v => [$i, $t, $d])
+  <label class="relative cursor-pointer rounded-xl border-2 p-3 text-center text-xs transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-moss/40" :class="role=='{{ $v }}'?'border-moss bg-green-50 shadow-md -translate-y-0.5':'border-slate-200 hover:border-slate-300'"><input class="sr-only" type="radio" name="role" value="{{ $v }}" x-model="role"><span x-show="role=='{{ $v }}'" x-cloak class="absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full bg-moss text-[10px] text-white">✓</span><div class="text-3xl transition" :class="role=='{{ $v }}'&&'scale-110'">{{ $i }}</div><b>{{ $t }}</b><div class="text-[10px] text-slate-500">{{ $d }}</div></label>@endforeach</div>
+ <div class="grid gap-3 sm:grid-cols-2"><div><label class="lbl" for="n">Nama lengkap</label><input id="n" name="name" required class="inp" value="{{ old('name') }}" autocomplete="name"></div>
   <div><label class="lbl" for="o" x-text="role=='provider'?'Nama usaha / instansi':'Nama organisasi / relawan'">Organisasi</label><input id="o" name="organization" required class="inp" value="{{ old('organization') }}"></div>
-  <div><label class="lbl" for="ph">No WhatsApp</label><input id="ph" name="phone" class="inp" inputmode="tel" value="{{ old('phone') }}"></div>
-  <div><label class="lbl" for="em">Email</label><input id="em" name="email" type="email" required class="inp" value="{{ old('email') }}"></div>
-  <div><label class="lbl" for="pw">Kata sandi (min. 6)</label><input id="pw" name="password" type="password" required class="inp"></div>
-  <div><label class="lbl" for="pc">Ulangi kata sandi</label><input id="pc" name="password_confirmation" type="password" required class="inp"></div></div>
- <button class="btn w-full">Buat Akun</button><p class="text-center text-xs text-slate-500">Sudah punya akun? <a class="font-bold text-moss underline" href="{{ route('login') }}">Masuk</a></p>
+  <div><label class="lbl" for="ph">No WhatsApp</label><input id="ph" name="phone" class="inp" inputmode="tel" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"><p class="mt-0.5 text-[10px] text-slate-400">Dipakai agar pemberi &amp; penerima bisa saling menghubungi.</p></div>
+  <div><label class="lbl" for="em">Email</label><input id="em" name="email" type="email" required class="inp" value="{{ old('email') }}" autocomplete="email" @error('email') aria-invalid="true" aria-describedby="em-err" @enderror>@error('email')<p id="em-err" class="err">⚠ {{ $message }}</p>@enderror</div>
+  <div><label class="lbl" for="pw">Kata sandi (min. 6)</label><div class="relative"><input id="pw" name="password" :type="show?'text':'password'" required minlength="6" class="inp pr-14" x-model="pw" autocomplete="new-password"><button type="button" class="absolute inset-y-0 right-2 text-[10px] font-bold text-slate-500" @click="show=!show" x-text="show?'Sembunyi':'Lihat'"></button></div>
+   <div class="mt-1 flex gap-1" aria-hidden="true"><template x-for="k in 4"><span class="h-1 flex-1 rounded-full transition" :class="k<=score?(score<2?'bg-red-500':score<3?'bg-amber-500':'bg-moss'):'bg-slate-200'"></span></template></div>
+   <p class="text-[10px] text-slate-500" x-show="pw" x-text="['Terlalu pendek','Lemah','Cukup','Kuat','Sangat kuat'][score]"></p></div>
+  <div><label class="lbl" for="pc">Ulangi kata sandi</label><input id="pc" name="password_confirmation" :type="show?'text':'password'" required class="inp" x-model="pc" autocomplete="new-password"><p x-show="pc" x-cloak class="mt-1 text-[10px]" :class="pc==pw?'text-moss':'text-red-600'" x-text="pc==pw?'✓ Cocok':'✗ Belum cocok'"></p></div></div>
+ <button class="btn btn-g w-full py-3 text-sm" :disabled="busy" x-text="busy?'⏳ Membuat akun…':'Buat Akun'">Buat Akun</button><p class="text-center text-xs text-slate-500">Sudah punya akun? <a class="font-bold text-moss underline" href="{{ route('login') }}">Masuk</a></p>
 </form></div>
 @endsection

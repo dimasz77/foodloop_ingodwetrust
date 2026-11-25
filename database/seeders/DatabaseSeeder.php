@@ -1,7 +1,10 @@
 <?php
+
 namespace Database\Seeders;
 
-use App\Models\{Partner,Report,User};
+use App\Models\Partner;
+use App\Models\Report;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,7 +14,7 @@ class DatabaseSeeder extends Seeder
         // Akun demo (kata sandi semuanya: password)
         $prov = [];
         foreach ([['SMILEY Restaurant', 'smiley'], ['Italy Restaurant', 'italy'], ['Sun Hotel', 'sunhotel'], ['Bakery Delight', 'bakery'], ['Katering Berkah', 'katering']] as [$n, $e]) {
-            $prov[$n] = User::create(['name' => $n, 'organization' => $n, 'email' => "$e@foodloop.test", 'password' => 'password', 'role' => 'provider', 'phone' => '081200000' . count($prov)]);
+            $prov[$n] = User::create(['name' => $n, 'organization' => $n, 'email' => "$e@foodloop.test", 'password' => 'password', 'role' => 'provider', 'phone' => '081200000'.count($prov)]);
         }
         $rec = [
             User::create(['name' => 'Budiman Pekerti', 'organization' => 'Relawan FoodLoop', 'email' => 'relawan@foodloop.test', 'password' => 'password', 'role' => 'recipient', 'phone' => '081311111111']),
@@ -22,7 +25,9 @@ class DatabaseSeeder extends Seeder
             ['Panti Asuhan Kasih', 'layak', 'Jakarta Selatan', -6.2600, 106.8100], ['Panti Jompo Sejahtera', 'layak', 'Jakarta Timur', -6.2300, 106.9000],
             ['Dapur Umum Warga Tangerang', 'layak', 'Tangerang', -6.1800, 106.6300], ['BSF Farm Tangerang', 'organik', 'Tangerang', -6.2000, 106.6500],
             ['Komposter Bekasi', 'organik', 'Bekasi', -6.2500, 106.9900], ['Rumah Kompos Depok', 'organik', 'Depok', -6.3900, 106.8200],
-        ] as [$n, $t, $a, $la, $ln]) Partner::create(['name' => $n, 'type' => $t, 'address' => $a, 'lat' => $la, 'lng' => $ln]);
+        ] as [$n, $t, $a, $la, $ln]) {
+            Partner::create(['name' => $n, 'type' => $t, 'address' => $a, 'lat' => $la, 'lng' => $ln]);
+        }
 
         foreach ([ // judul, penyedia, kategori, porsi, kg, jam sisa, lat, lng, status
             ['Roti berlebih toko', 'Bakery Delight', 'layak', 8, 3.2, 0.7, -6.2000, 106.8300, 'waiting'],
@@ -43,10 +48,11 @@ class DatabaseSeeder extends Seeder
             ['Sun Hotel', 'organik', 0, 55, false], ['Sun Hotel', 'organik', 0, 40, false], ['Bakery Delight', 'layak', 60, 24, true],
             ['Katering Berkah', 'layak', 90, 36, false], ['Italy Restaurant', 'organik', 0, 30, false], ['Bakery Delight', 'layak', 45, 18, true],
         ] as $i => [$p, $c, $por, $kg, $u]) {
-            Report::create(['title' => 'Penyaluran ' . ($i + 1), 'provider_name' => $p, 'provider_id' => $prov[$p]->id, 'category' => $c, 'portions' => $por, 'weight_kg' => $kg, 'urgent' => $u,
+            Report::create(['title' => 'Penyaluran '.($i + 1), 'provider_name' => $p, 'provider_id' => $prov[$p]->id, 'category' => $c, 'portions' => $por, 'weight_kg' => $kg, 'urgent' => $u,
                 'expires_at' => now()->subDays(($i + 1) * 25), 'delivered_at' => now()->subDays(($i + 1) * 25)->addHours(2), 'lat' => -6.22, 'lng' => 106.82,
                 'status' => 'delivered', 'partner_id' => Partner::nearest($c, -6.22, 106.82)->id,
-                'recipient_id' => $rec[$i % 2]->id, 'volunteer_name' => $rec[$i % 2]->name]);
+                'recipient_id' => $rec[$i % 2]->id, 'volunteer_name' => $rec[$i % 2]->name,
+                'thank_note' => ['Terima kasih! Anak-anak panti sangat senang.', null, 'Sudah kami olah jadi pakan maggot, terima kasih.'][$i % 3]]);
         }
     }
 }

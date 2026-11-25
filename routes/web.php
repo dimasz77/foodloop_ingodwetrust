@@ -1,10 +1,14 @@
 <?php
-use App\Http\Controllers\{AuthController,PageController,ReportController};
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/impact', [PageController::class, 'impact'])->name('impact');
 Route::get('/map', [ReportController::class, 'map'])->name('map');
+Route::get('/map/pins', [ReportController::class, 'pins'])->name('map.pins');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -25,5 +29,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/status', [ReportController::class, 'status'])->name('status');
     Route::get('/history', [ReportController::class, 'history'])->name('history');
     Route::post('/reports/{report}/{action}', [ReportController::class, 'act'])
-        ->whereIn('action', ['claim', 'start', 'complete', 'reroute'])->name('report.act');
+        ->whereIn('action', ['claim', 'start', 'complete', 'reroute', 'release'])->name('report.act');
 });

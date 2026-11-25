@@ -33,6 +33,16 @@ class UserFactory extends Factory
         ];
     }
 
+    public function provider(): static
+    {
+        return $this->state(fn () => ['role' => 'provider', 'organization' => fake()->company(), 'phone' => '081234567890']);
+    }
+
+    public function recipient(): static
+    {
+        return $this->state(fn () => ['role' => 'recipient', 'organization' => 'Relawan', 'phone' => '081298765432']);
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */
