@@ -4,7 +4,7 @@
 --}}
 @props(['title', 'eyebrow' => null, 'subtitle' => null, 'image' => null, 'crumbs' => [], 'compact' => false])
 <section class="relative isolate overflow-hidden bg-[#0c1f19] text-white">
- <x-bg-media :name="pathinfo((string) $image, PATHINFO_FILENAME) ?: 'none'" kenburns overlay="bg-gradient-to-r from-[#0c1f19]/90 via-[#0c1f19]/65 to-[#0c1f19]/30" />
+ <x-bg-media :name="pathinfo((string) $image, PATHINFO_FILENAME) ?: 'none'" kenburns overlay="bg-[#0c1f19]/75 md:bg-transparent md:bg-gradient-to-r md:from-[#0c1f19]/95 md:via-[#0c1f19]/70 md:to-[#0c1f19]/25" />
  <div class="mx-auto max-w-6xl px-4 {{ isset($after) ? 'pb-14 pt-8 md:pt-10' : ($compact ? 'pb-20 pt-8' : 'pb-24 pt-8 md:pb-28 md:pt-10') }}">
   <nav aria-label="Breadcrumb" class="animate-rise text-[0.75rem] font-semibold text-white/60">
    <ol class="flex flex-wrap items-center gap-1.5">

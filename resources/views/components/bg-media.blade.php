@@ -9,19 +9,28 @@
 @props([
     'name',
     'kenburns' => false,
+    'focus' => 'center',
     'overlay' => null,
     'fallback' => 'bg-gradient-to-br from-[#0c1f19] via-[#143a2c] to-[#1f4b4a]',
 ])
 @php
-  $find = fn (string $path) => file_exists(public_path($path)) ? asset($path) : null;
-  $webm = $find("videos/{$name}.webm");
-  $mp4 = $find("videos/{$name}.mp4");
-  $poster = $find("images/{$name}.jpg");
+  $find = function (string ...$paths): ?string {
+      foreach ($paths as $path) {
+          if (file_exists(public_path($path))) {
+              return asset($path);
+          }
+      }
+
+      return null;
+  };
+  $webm = $find("videos/{$name}.webm", "video/{$name}.webm");
+  $mp4 = $find("videos/{$name}.mp4", "video/{$name}.mp4");
+  $poster = $find("images/{$name}.jpg", "images/{$name}.webp", "video/{$name}.jpg");
 @endphp
 
 @if($webm || $mp4)
  <div class="absolute inset-0 -z-10" aria-hidden="true">
-  <video class="h-full w-full object-cover" muted loop playsinline preload="metadata" @if($poster) poster="{{ $poster }}" @endif disablepictureinpicture>
+  <video class="h-full w-full object-cover" style="object-position: {{ $focus }}" muted loop playsinline preload="metadata" @if($poster) poster="{{ $poster }}" @endif disablepictureinpicture>
    @if($webm)<source src="{{ $webm }}" type="video/webm">@endif
    @if($mp4)<source src="{{ $mp4 }}" type="video/mp4">@endif
   </video>
@@ -34,7 +43,7 @@
   <span x-text="playing ? 'Jeda' : 'Putar'">Jeda</span>
  </button>
 @elseif($poster)
- <img src="{{ $poster }}" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover {{ $kenburns ? 'animate-kenburns' : '' }}">
+ <img src="{{ $poster }}" alt="" style="object-position: {{ $focus }}" class="absolute inset-0 -z-10 h-full w-full object-cover {{ $kenburns ? 'animate-kenburns' : '' }}">
  @if($overlay)<div class="absolute inset-0 -z-10 {{ $overlay }}"></div>@endif
 @else
  <div class="absolute inset-0 -z-10 {{ $fallback }}"><x-contour /></div>

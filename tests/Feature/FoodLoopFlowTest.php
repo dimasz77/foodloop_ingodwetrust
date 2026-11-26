@@ -37,30 +37,28 @@ class FoodLoopFlowTest extends TestCase
         $this->get(route('about'))->assertOk()->assertSee('Kontribusi pada SDGs')->assertSee('Panduan uji coba');
     }
 
-    public function test_hero_uses_background_video_with_pause_control_when_available(): void
+    public function test_background_media_uses_video_with_pause_control_only_when_file_exists(): void
     {
-        $this->get(route('home'))->assertOk()->assertDontSee('<video', false);
+        $name = 'zz-test-'.uniqid();
+        $this->blade('<x-bg-media :name="$name" />', ['name' => $name])
+            ->assertDontSee('<video', false)
+            ->assertSee('<svg', false);
 
         $dir = public_path('videos');
-        $file = $dir.'/hero.mp4';
         $createdDir = ! is_dir($dir);
-        $existed = file_exists($file);
         if ($createdDir) {
             mkdir($dir);
         }
-        if (! $existed) {
-            file_put_contents($file, 'dummy');
-        }
+        $file = "{$dir}/{$name}.mp4";
+        file_put_contents($file, 'dummy');
 
         try {
-            $this->get(route('home'))->assertOk()
+            $this->blade('<x-bg-media :name="$name" />', ['name' => $name])
                 ->assertSee('<video', false)
-                ->assertSee('videos/hero.mp4', false)
+                ->assertSee("videos/{$name}.mp4", false)
                 ->assertSee('Jeda video latar');
         } finally {
-            if (! $existed) {
-                unlink($file);
-            }
+            unlink($file);
             if ($createdDir) {
                 rmdir($dir);
             }

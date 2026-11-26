@@ -10,9 +10,9 @@
 @endphp
 
 {{-- HERO: latar video/foto. Taruh public/videos/hero.mp4 (opsional .webm) dan/atau public/images/hero.jpg. --}}
-<section class="relative isolate flex min-h-[calc(100vh-4.5rem)] items-center overflow-hidden bg-[#0c1f19] md:min-h-[78vh]">
- <x-bg-media name="hero" kenburns />
- <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c1f19]/90 via-[#0c1f19]/55 to-[#0c1f19]/10"></div>
+<section class="relative isolate flex min-h-[calc(100svh-4.5rem)] items-center overflow-hidden bg-[#0c1f19]">
+ <x-bg-media name="hero" focus="35% 40%" kenburns />
+ <div class="absolute inset-0 -z-10 bg-[#0c1f19]/70 md:bg-transparent md:bg-gradient-to-r md:from-[#0c1f19]/95 md:via-[#0c1f19]/70 md:via-45% md:to-[#0c1f19]/10"></div>
  <div class="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-[#0c1f19]/70 to-transparent"></div>
 
  <div class="mx-auto w-full max-w-6xl px-4 py-16">
@@ -47,7 +47,7 @@
 
 {{-- TIGA PILAR: foto penuh kedua --}}
 <section id="fitur" class="relative isolate overflow-hidden bg-[#143a2c] py-24 md:py-32">
- <x-bg-media name="fitur" overlay="bg-[#0c1f19]/65" fallback="bg-gradient-to-b from-[#1f4b4a] to-[#143a2c]" />
+ <x-bg-media name="fitur" overlay="bg-gradient-to-b from-[#0c1f19]/80 via-[#0c1f19]/70 to-[#0c1f19]/85" fallback="bg-gradient-to-b from-[#1f4b4a] to-[#143a2c]" />
  <div class="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-3">
   @foreach([
    ['Lapor Kapan Saja', 'Surplus dari acara, prasmanan, atau toko roti? Laporkan dalam kurang dari satu menit, 24 jam sehari.'],
