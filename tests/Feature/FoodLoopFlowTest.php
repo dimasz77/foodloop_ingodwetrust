@@ -37,6 +37,36 @@ class FoodLoopFlowTest extends TestCase
         $this->get(route('about'))->assertOk()->assertSee('Kontribusi pada SDGs')->assertSee('Panduan uji coba');
     }
 
+    public function test_hero_uses_background_video_with_pause_control_when_available(): void
+    {
+        $this->get(route('home'))->assertOk()->assertDontSee('<video', false);
+
+        $dir = public_path('videos');
+        $file = $dir.'/hero.mp4';
+        $createdDir = ! is_dir($dir);
+        $existed = file_exists($file);
+        if ($createdDir) {
+            mkdir($dir);
+        }
+        if (! $existed) {
+            file_put_contents($file, 'dummy');
+        }
+
+        try {
+            $this->get(route('home'))->assertOk()
+                ->assertSee('<video', false)
+                ->assertSee('videos/hero.mp4', false)
+                ->assertSee('Jeda video latar');
+        } finally {
+            if (! $existed) {
+                unlink($file);
+            }
+            if ($createdDir) {
+                rmdir($dir);
+            }
+        }
+    }
+
     public function test_login_prefills_only_demo_accounts(): void
     {
         $this->get(route('login', ['demo' => 'bsf@foodloop.test']))->assertOk()->assertSee('Akun demo sudah terisi');

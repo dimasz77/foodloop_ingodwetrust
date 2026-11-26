@@ -149,7 +149,7 @@ kbd{font:600 10px ui-monospace,monospace;padding:1px 5px;border-radius:4px;borde
 /* Preferensi aksesibilitas (tersimpan di perangkat pengguna) */
 function a11y(){const load=()=>{try{return Object.assign({fs:'',hc:false,ul:false,rm:false},JSON.parse(localStorage.getItem('fl-a11y')||'{}'))}catch(e){return {fs:'',hc:false,ul:false,rm:false}}};
  return {open:false,p:load(),
-  apply(){const d=document.documentElement;this.p.fs?d.dataset.fs=this.p.fs:delete d.dataset.fs;['hc','ul','rm'].forEach(k=>d.classList.toggle(k,!!this.p[k]));try{localStorage.setItem('fl-a11y',JSON.stringify(this.p))}catch(e){}},
+  apply(){const d=document.documentElement;this.p.fs?d.dataset.fs=this.p.fs:delete d.dataset.fs;['hc','ul','rm'].forEach(k=>d.classList.toggle(k,!!this.p[k]));if(this.p.rm)document.querySelectorAll('video').forEach(v=>v.pause());try{localStorage.setItem('fl-a11y',JSON.stringify(this.p))}catch(e){}},
   set(k,v){this.p[k]=v;this.apply()},reset(){this.p={fs:'',hc:false,ul:false,rm:false};this.apply()}}}
 /* PWA: service worker + tombol pasang aplikasi */
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('{{ asset('sw.js') }}').catch(()=>{}));

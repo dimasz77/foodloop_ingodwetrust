@@ -9,18 +9,9 @@
   $TREE = \App\Services\ImpactCalculator::CO2E_PER_TREE_YEAR;
 @endphp
 
-{{-- HERO: foto penuh. Taruh foto di public/images/hero.jpg & public/images/fitur.jpg; jika belum ada, dipakai latar cadangan. --}}
-@php
-  $photo = fn (string $file) => file_exists(public_path('images/'.$file)) ? asset('images/'.$file) : null;
-  $heroImg = $photo('hero.jpg');
-  $featImg = $photo('fitur.jpg');
-@endphp
+{{-- HERO: latar video/foto. Taruh public/videos/hero.mp4 (opsional .webm) dan/atau public/images/hero.jpg. --}}
 <section class="relative isolate flex min-h-[calc(100vh-4.5rem)] items-center overflow-hidden bg-[#0c1f19] md:min-h-[78vh]">
- @if($heroImg)
-  <img src="{{ $heroImg }}" alt="" class="absolute inset-0 -z-10 h-full w-full animate-kenburns object-cover">
- @else
-  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#0c1f19] via-[#143a2c] to-[#1f4b4a]"><x-contour /></div>
- @endif
+ <x-bg-media name="hero" kenburns />
  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c1f19]/90 via-[#0c1f19]/55 to-[#0c1f19]/10"></div>
  <div class="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-[#0c1f19]/70 to-transparent"></div>
 
@@ -56,12 +47,7 @@
 
 {{-- TIGA PILAR: foto penuh kedua --}}
 <section id="fitur" class="relative isolate overflow-hidden bg-[#143a2c] py-24 md:py-32">
- @if($featImg)
-  <img src="{{ $featImg }}" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" loading="lazy">
-  <div class="absolute inset-0 -z-10 bg-[#0c1f19]/65"></div>
- @else
-  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#1f4b4a] to-[#143a2c]"><x-contour /></div>
- @endif
+ <x-bg-media name="fitur" overlay="bg-[#0c1f19]/65" fallback="bg-gradient-to-b from-[#1f4b4a] to-[#143a2c]" />
  <div class="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-3">
   @foreach([
    ['Lapor Kapan Saja', 'Surplus dari acara, prasmanan, atau toko roti? Laporkan dalam kurang dari satu menit, 24 jam sehari.'],

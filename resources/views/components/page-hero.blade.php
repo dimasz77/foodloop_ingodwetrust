@@ -3,14 +3,8 @@
   Foto opsional: public/images/{image}. Slot dipakai untuk aksi/status di bawah judul.
 --}}
 @props(['title', 'eyebrow' => null, 'subtitle' => null, 'image' => null, 'crumbs' => [], 'compact' => false])
-@php $img = $image && file_exists(public_path('images/'.$image)) ? asset('images/'.$image) : null; @endphp
 <section class="relative isolate overflow-hidden bg-[#0c1f19] text-white">
- @if($img)
-  <img src="{{ $img }}" alt="" class="absolute inset-0 -z-10 h-full w-full animate-kenburns object-cover">
-  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c1f19]/90 via-[#0c1f19]/65 to-[#0c1f19]/30"></div>
- @else
-  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#0c1f19] via-[#143a2c] to-[#1f4b4a]"><x-contour /></div>
- @endif
+ <x-bg-media :name="pathinfo((string) $image, PATHINFO_FILENAME) ?: 'none'" kenburns overlay="bg-gradient-to-r from-[#0c1f19]/90 via-[#0c1f19]/65 to-[#0c1f19]/30" />
  <div class="mx-auto max-w-6xl px-4 {{ isset($after) ? 'pb-14 pt-8 md:pt-10' : ($compact ? 'pb-20 pt-8' : 'pb-24 pt-8 md:pb-28 md:pt-10') }}">
   <nav aria-label="Breadcrumb" class="animate-rise text-[0.75rem] font-semibold text-white/60">
    <ol class="flex flex-wrap items-center gap-1.5">
