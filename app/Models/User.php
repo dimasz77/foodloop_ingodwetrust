@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'organization', 'phone'])]
+#[Fillable(['name', 'email', 'password', 'role', 'organization', 'phone', 'avatar_path', 'lat', 'lng'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,7 +27,26 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'lat' => 'float',
+            'lng' => 'float',
         ];
+    }
+
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path ? asset('storage/'.$this->avatar_path) : null;
+    }
+
+    /**
+     * Lokasi default pengguna untuk peta & form lapor (Jakarta bila belum diatur).
+     *
+     * @return array{lat: float, lng: float, saved: bool}
+     */
+    public function homeLocation(): array
+    {
+        $saved = $this->lat !== null && $this->lng !== null;
+
+        return ['lat' => $saved ? $this->lat : -6.2088, 'lng' => $saved ? $this->lng : 106.8456, 'saved' => $saved];
     }
 
     /**

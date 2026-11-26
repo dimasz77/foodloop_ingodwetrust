@@ -35,7 +35,13 @@ class AuthController extends Controller
         $v = $r->validate([
             'role' => 'required|in:'.implode(',', array_keys(User::ROLES)), 'name' => 'required|string|max:80', 'organization' => 'required|string|max:80',
             'phone' => 'nullable|string|max:20', 'email' => 'required|email|unique:users,email', 'password' => 'required|min:6|confirmed',
-        ]);
+            'lat' => 'nullable|numeric|between:-90,90|required_with:lng', 'lng' => 'nullable|numeric|between:-180,180|required_with:lat',
+            'avatar' => 'nullable|image|max:2048',
+        ], ['avatar.image' => 'Foto profil harus berupa gambar.', 'avatar.max' => 'Ukuran foto profil maksimal 2 MB.']);
+        if ($r->hasFile('avatar')) {
+            $v['avatar_path'] = $r->file('avatar')->store('avatars', 'public');
+        }
+        unset($v['avatar']);
         Auth::login(User::create($v));
         $r->session()->regenerate();
 

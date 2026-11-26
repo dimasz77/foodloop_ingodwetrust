@@ -55,7 +55,7 @@
 let pins=@json($pins);
 const partners=@json($partners),csrf='{{ csrf_token() }}',base='{{ url('/reports') }}',pinsUrl='{{ route('map.pins') }}';
 const role=@json($role),loginUrl='{{ route('login') }}',focusId=@json($focus);
-let user={lat:-6.2088,lng:106.8456},sel=null,routes=[],userM=null,tick=null,lastSig='';
+let user=@json($home),sel=null,routes=[],userM=null,tick=null,lastSig='';
 const map=L.map('map',{zoomControl:false}).setView([user.lat,user.lng],11);
 L.control.zoom({position:'bottomright'}).addTo(map);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);

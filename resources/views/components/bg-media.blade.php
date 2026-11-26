@@ -2,8 +2,8 @@
   Latar sebuah section: video → foto → gradasi kontur (dipilih otomatis sesuai file yang tersedia).
   Video : public/videos/{name}.webm dan/atau public/videos/{name}.mp4
   Poster: public/images/{name}.jpg (dipakai juga bila video tidak diputar)
-  Aksesibilitas: video selalu bisu, ada tombol jeda (WCAG 2.2.2), tidak diputar bila pengguna
-  memilih "kurangi animasi"/mode hemat data, dan berhenti saat section tidak terlihat.
+  Aksesibilitas: video selalu bisu, tidak diputar bila pengguna memilih "kurangi animasi"
+  (panel aksesibilitas / pengaturan sistem) atau mode hemat data, dan berhenti saat section tidak terlihat.
   Parent wajib berkelas "relative isolate".
 --}}
 @props([
@@ -29,19 +29,13 @@
 @endphp
 
 @if($webm || $mp4)
- <div class="absolute inset-0 -z-10" aria-hidden="true">
+ <div class="absolute inset-0 -z-10" aria-hidden="true" x-data="bgVideo($el.querySelector('video'))">
   <video class="h-full w-full object-cover" style="object-position: {{ $focus }}" muted loop playsinline preload="metadata" @if($poster) poster="{{ $poster }}" @endif disablepictureinpicture>
    @if($webm)<source src="{{ $webm }}" type="video/webm">@endif
    @if($mp4)<source src="{{ $mp4 }}" type="video/mp4">@endif
   </video>
   @if($overlay)<div class="absolute inset-0 {{ $overlay }}"></div>@endif
  </div>
- <button type="button" x-data="bgVideo($el.parentElement.querySelector('video'))" @click="toggle()" :aria-label="playing ? 'Jeda video latar' : 'Putar video latar'" :aria-pressed="!playing"
-  class="absolute bottom-5 right-4 z-10 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-2 text-[0.75rem] font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-black/60">
-  <svg x-show="playing" class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>
-  <svg x-show="!playing" x-cloak class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
-  <span x-text="playing ? 'Jeda' : 'Putar'">Jeda</span>
- </button>
 @elseif($poster)
  <img src="{{ $poster }}" alt="" style="object-position: {{ $focus }}" class="absolute inset-0 -z-10 h-full w-full object-cover {{ $kenburns ? 'animate-kenburns' : '' }}">
  @if($overlay)<div class="absolute inset-0 -z-10 {{ $overlay }}"></div>@endif

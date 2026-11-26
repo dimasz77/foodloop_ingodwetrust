@@ -117,6 +117,28 @@
  </div>
 </section>
 
+{{-- PITA: FAQ (bantuan & dokumentasi) --}}
+@php $K = str_replace('.', ',', \App\Services\ImpactCalculator::KG_PER_PORTION); $C = str_replace('.', ',', \App\Services\ImpactCalculator::CO2E_PER_KG); @endphp
+<section id="faq" class="scroll-mt-20 border-t border-slate-200 bg-white" x-data="{o:0}">
+ <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-[1fr_2fr]">
+  <div data-reveal><p class="sec"><span class="h-[3px] w-8 rounded bg-moss"></span>FAQ</p><h2 class="mt-2 text-3xl font-extrabold">Pertanyaan yang Sering Diajukan</h2><p class="mt-3 text-sm text-slate-600">Belum terjawab? Buka panduan bantuan di setiap halaman lewat tombol tanda tanya.</p></div>
+  <div class="space-y-3">
+   @foreach([
+    ['Makanan seperti apa yang boleh dilaporkan?', 'Semua surplus makanan: nasi kotak, roti, prasmanan, hingga sisa sayur dan buah. Checklist kelayakan menentukan apakah makanan disalurkan ke manusia (Human-First) atau ke mitra pengolah organik (Earth-First).'],
+    ['Bagaimana jika tidak ada yang mengklaim sebelum kedaluwarsa?', 'Sistem melakukan auto re-route: laporan otomatis dialihkan ke mitra pengolah organik terdekat (maggot BSF atau kompos), sehingga tetap tidak berakhir di TPA.'],
+    ['Siapa yang bisa mengklaim?', 'Makanan layak konsumsi diklaim oleh Penerima Makanan (relawan, panti, dapur umum). Sisa organik diklaim oleh Mitra Pengolah Organik (peternak maggot BSF, komposter).'],
+    ['Bagaimana cara menghubungi pemberi makanan?', 'Setelah klaim berhasil, tombol WhatsApp pemberi muncul di halaman status dan peta, lengkap dengan pesan pembuka otomatis.'],
+    ['Dari mana angka CO₂e berasal?', "Angka adalah estimasi: setiap kg makanan yang diselamatkan diasumsikan mencegah {$C} kg CO₂e, dan 1 porsi ≈ {$K} kg."],
+   ] as $i => [$q, $a])
+    <div class="overflow-hidden rounded-2xl bg-cream ring-1 ring-black/5 transition" :class="o=={{ $i }}&&'bg-white shadow-md ring-moss/30'" data-reveal>
+     <button type="button" class="flex w-full items-center justify-between gap-3 p-4 text-left text-sm font-bold" @click="o=o=={{ $i }}?null:{{ $i }}" :aria-expanded="o=={{ $i }}" aria-controls="faq-{{ $i }}">{{ $q }}<span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white text-base transition" :class="o=={{ $i }}&&'rotate-45 bg-moss text-white'" aria-hidden="true">+</span></button>
+     <div id="faq-{{ $i }}" x-show="o=={{ $i }}" x-transition.opacity.duration.300ms x-cloak class="px-4 pb-4 text-sm text-slate-600">{{ $a }}</div>
+    </div>
+   @endforeach
+  </div>
+ </div>
+</section>
+
 {{-- PITA 6: teknologi --}}
 <section class="border-t border-slate-200 bg-white">
  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-[1fr_2fr]">

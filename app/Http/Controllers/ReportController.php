@@ -19,6 +19,7 @@ class ReportController extends Controller
             'partners' => Partner::all(['name', 'type', 'lat', 'lng']),
             'role' => auth()->user()?->role,
             'focus' => $r->integer('focus') ?: null,
+            'home' => $r->user()?->homeLocation() ?? ['lat' => -6.2088, 'lng' => 106.8456, 'saved' => false],
         ]);
     }
 

@@ -34,7 +34,7 @@ class FoodLoopFlowTest extends TestCase
         $this->get(route('impact'))->assertOk()->assertSee('Makanan Tersalurkan per Bulan');
         $this->get(route('login'))->assertOk();
         $this->get(route('register'))->assertOk();
-        $this->get(route('about'))->assertOk()->assertSee('Kontribusi pada SDGs')->assertSee('Panduan uji coba');
+        $this->get(route('about'))->assertOk()->assertSee('Kontribusi pada SDGs')->assertSee('Panduan uji coba')->assertSee('Pertanyaan yang Sering Diajukan');
     }
 
     public function test_background_media_uses_video_with_pause_control_only_when_file_exists(): void
@@ -56,13 +56,72 @@ class FoodLoopFlowTest extends TestCase
             $this->blade('<x-bg-media :name="$name" />', ['name' => $name])
                 ->assertSee('<video', false)
                 ->assertSee("videos/{$name}.mp4", false)
-                ->assertSee('Jeda video latar');
+                ->assertSee('bgVideo', false);
         } finally {
             unlink($file);
             if ($createdDir) {
                 rmdir($dir);
             }
         }
+    }
+
+    public function test_registration_accepts_optional_avatar_and_location(): void
+    {
+        Storage::fake('public');
+
+        $this->get(route('register'))->assertOk()->assertSee('Gunakan lokasi saat ini')->assertSee('Mitra Pengolah Organik');
+
+        $this->post(route('register'), [
+            'role' => 'recipient', 'name' => 'Sari', 'organization' => 'Dapur Umum', 'email' => 'sari@example.test',
+            'password' => 'rahasia', 'password_confirmation' => 'rahasia', 'lat' => -6.3, 'lng' => 106.8,
+            'avatar' => UploadedFile::fake()->image('sari.png', 200, 200),
+        ])->assertRedirect(route('map'));
+
+        $user = User::where('email', 'sari@example.test')->first();
+        $this->assertEqualsWithDelta(-6.3, $user->lat, 0.0001);
+        Storage::disk('public')->assertExists($user->avatar_path);
+    }
+
+    public function test_guest_is_redirected_from_profile(): void
+    {
+        $this->get(route('profile.edit'))->assertRedirect(route('login'));
+    }
+
+    public function test_user_can_update_profile_location_and_avatar(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->provider()->create();
+
+        $this->actingAs($user)->get(route('profile.edit'))->assertOk()->assertSee('Gunakan lokasi saat ini');
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => 'Restoran Baru', 'organization' => 'Resto Baru', 'phone' => '081211112222',
+            'email' => $user->email, 'lat' => -6.25, 'lng' => 106.9,
+            'avatar' => UploadedFile::fake()->image('foto.jpg', 300, 300),
+        ])->assertRedirect(route('profile.edit'))->assertSessionHasNoErrors();
+
+        $user->refresh();
+        $this->assertSame('Restoran Baru', $user->name);
+        $this->assertEqualsWithDelta(-6.25, $user->lat, 0.0001);
+        $this->assertSame('provider', $user->role);
+        Storage::disk('public')->assertExists($user->avatar_path);
+
+        $this->actingAs($user)->get(route('report.create'))->assertOk()->assertSee('lat:-6.25', false);
+    }
+
+    public function test_profile_email_must_be_unique_and_role_cannot_change(): void
+    {
+        $other = User::factory()->recipient()->create();
+        $user = User::factory()->provider()->create();
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => $user->name, 'organization' => 'X', 'email' => $other->email, 'role' => 'recipient',
+        ])->assertSessionHasErrors('email');
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => $user->name, 'organization' => 'X', 'email' => $user->email, 'role' => 'recipient',
+        ])->assertSessionHasNoErrors();
+        $this->assertSame('provider', $user->fresh()->role);
     }
 
     public function test_login_prefills_only_demo_accounts(): void

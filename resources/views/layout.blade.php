@@ -51,24 +51,32 @@ kbd{font:600 10px ui-monospace,monospace;padding:1px 5px;border-radius:4px;borde
    @endforeach
   </nav>
   <div class="flex items-center gap-2 text-xs">
-   @auth
-    <button @click="o=!o" :aria-expanded="o" aria-label="Menu akun" class="flex items-center gap-2 rounded-full bg-white/10 py-1 pl-1 pr-3 ring-1 ring-white/15 transition hover:bg-white/15"><span class="grid h-7 w-7 place-items-center rounded-full bg-lime-300 text-[0.75rem] font-extrabold text-[#0c1f19]">{{ mb_strtoupper(mb_substr($u->name, 0, 1)) }}</span><span class="hidden max-w-[7rem] truncate font-bold sm:block">{{ $u->name }}</span><svg class="h-3 w-3 transition" :class="o&&'rotate-180'" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
-   @else
-    <a class="hidden px-2 py-1 font-extrabold uppercase tracking-wide text-white/90 hover:text-lime-300 sm:block" href="{{ route('login') }}">Masuk</a><a class="inline-flex items-center rounded-lg bg-lime-300 px-4 py-2 font-extrabold uppercase tracking-wide text-[#0c1f19] transition hover:bg-lime-200" href="{{ route('register') }}">Daftar</a>
-   @endauth
+   {{-- Ikon akun: foto profil bila sudah masuk, ikon orang bila belum --}}
+   <button @click="o=!o" :aria-expanded="o" aria-haspopup="menu" aria-label="{{ $u ? 'Menu akun '.$u->name : 'Masuk atau daftar' }}" title="{{ $u ? 'Akun saya' : 'Masuk / Daftar' }}" class="grid h-10 w-10 place-items-center overflow-hidden rounded-full ring-2 transition {{ $u ? 'ring-lime-300/70 hover:ring-lime-300' : 'ring-white/40 text-white hover:text-lime-300 hover:ring-lime-300' }}" :class="o&&'ring-lime-300'">
+    @if($u?->avatarUrl())<img src="{{ $u->avatarUrl() }}" alt="" class="h-full w-full object-cover">
+    @elseif($u)<span class="grid h-full w-full place-items-center bg-lime-300 text-sm font-extrabold text-[#0c1f19]">{{ mb_strtoupper(mb_substr($u->name, 0, 1)) }}</span>
+    @else<svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/></svg>@endif
+   </button>
    <button class="grid h-9 w-9 place-items-center rounded-lg text-lg hover:bg-white/10 md:hidden" @click="m=!m" :aria-expanded="m" aria-label="Buka menu navigasi"><span x-text="m?'✕':'☰'">☰</span></button>
   </div>
-  @auth
-  <div x-show="o" x-cloak x-transition.origin.top.right @click.outside="o=false" class="absolute right-4 top-full mt-2 w-60 rounded-xl bg-white p-2 text-xs text-slate-800 shadow-xl ring-1 ring-black/5">
-   <div class="border-b px-3 pb-2"><b>{{ $u->name }}</b><div class="text-[0.6875rem] text-slate-500">{{ $u->organization }}</div><span class="chip mt-1 bg-green-100 text-green-800">{{ $u->roleLabel() }}</span></div>
+  <div x-show="o" x-cloak x-transition.origin.top.right @click.outside="o=false" role="menu" class="absolute right-4 top-full mt-2 w-64 rounded-xl bg-white p-2 text-xs text-slate-800 shadow-xl ring-1 ring-black/5">
+  @guest
+   <div class="px-3 pb-2 pt-1"><b class="text-sm">Selamat datang</b><p class="text-[0.75rem] text-slate-500">Masuk untuk melapor, mengklaim, dan melihat dampak Anda.</p></div>
+   <a role="menuitem" class="btn btn-g mt-1 w-full" href="{{ route('login') }}">Masuk</a>
+   <a role="menuitem" class="btn btn-w mt-2 w-full" href="{{ route('register') }}">Daftar Akun Baru</a>
+  @else
+   <a role="menuitem" href="{{ route('profile.edit') }}" class="flex items-center gap-3 rounded-lg border-b px-3 pb-3 pt-1 hover:bg-slate-50">
+    <span class="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-lime-300 font-extrabold text-[#0c1f19]">@if($u->avatarUrl())<img src="{{ $u->avatarUrl() }}" alt="" class="h-full w-full object-cover">@else{{ mb_strtoupper(mb_substr($u->name, 0, 1)) }}@endif</span>
+    <span class="min-w-0"><b class="block truncate">{{ $u->name }}</b><span class="chip mt-0.5 bg-green-100 text-green-800">{{ $u->roleLabel() }}</span></span></a>
+   <a role="menuitem" class="mt-1 block rounded-lg px-3 py-2 font-bold hover:bg-slate-50" href="{{ route('profile.edit') }}">Profil Saya</a>
    @if($isProvider)
     <a class="block rounded-lg px-3 py-2 hover:bg-slate-50" href="{{ route('report.create') }}">Buat Laporan</a><a class="block rounded-lg px-3 py-2 hover:bg-slate-50" href="{{ route('status') }}">Status Laporan</a><a class="block rounded-lg px-3 py-2 hover:bg-slate-50" href="{{ route('history') }}">Riwayat &amp; Lencana</a>
    @else
     <a class="block rounded-lg px-3 py-2 hover:bg-slate-50" href="{{ route('map') }}">Cari &amp; Klaim Makanan</a><a class="block rounded-lg px-3 py-2 hover:bg-slate-50" href="{{ route('status') }}">Klaim Saya</a><a class="block rounded-lg px-3 py-2 hover:bg-slate-50" href="{{ route('history') }}">Riwayat &amp; Lencana</a>
    @endif
-   <form method="POST" action="{{ route('logout') }}">@csrf<button class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">Keluar</button></form>
+   <form method="POST" action="{{ route('logout') }}">@csrf<button role="menuitem" class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">Keluar</button></form>
+  @endguest
   </div>
-  @endauth
  </div>
  <nav x-show="m" x-cloak x-transition @click.outside="m=false" class="border-t border-white/10 px-4 pb-4 pt-2 text-sm font-extrabold uppercase tracking-wide md:hidden" aria-label="Navigasi seluler">
   @foreach($nav as $r => [$l, $i])
@@ -76,7 +84,7 @@ kbd{font:600 10px ui-monospace,monospace;padding:1px 5px;border-radius:4px;borde
     <a href="{{ route($r) }}" class="block border-l-[3px] px-3 py-3 {{ request()->routeIs($r) ? 'border-lime-300 text-lime-300' : 'border-transparent text-white/90' }}">{{ $l }}</a>
    @endif
   @endforeach
-  @guest<a href="{{ route('login') }}" class="block border-l-[3px] border-transparent px-3 py-3 text-white/90">Masuk</a>@endguest
+  @guest<a href="{{ route('login') }}" class="block border-l-[3px] border-transparent px-3 py-3 text-white/90">Masuk</a>@else<a href="{{ route('profile.edit') }}" class="block border-l-[3px] px-3 py-3 {{ request()->routeIs('profile.*') ? 'border-lime-300 text-lime-300' : 'border-transparent text-white/90' }}">Profil Saya</a>@endguest
  </nav>
 </header>
 
@@ -105,7 +113,7 @@ kbd{font:600 10px ui-monospace,monospace;padding:1px 5px;border-radius:4px;borde
    </div></div>
   <div class="mt-12 grid gap-6 border-t border-white/15 pt-8 text-xs sm:grid-cols-3">
    <div><b>Hubungi Kami</b><p class="mt-2 text-white/80">Institut Teknologi Del<br>Laguboti, Sumatera Utara, Indonesia<br>Telepon: +62 8129 3859<br>Email: foodloop@example.id</p></div>
-   <div><b>Jelajahi</b><p class="mt-2 flex flex-col gap-1 text-white/80"><a class="hover:text-white" href="{{ route('map') }}">Peta Penyelamatan</a><a class="hover:text-white" href="{{ route('impact') }}">Dampak Komunitas</a><a class="hover:text-white" href="{{ route('about') }}">Tentang &amp; SDGs</a><a class="hover:text-white" href="{{ route('about') }}#uji">Panduan Uji Coba</a><a class="hover:text-white" href="{{ route('home') }}#faq">FAQ</a></p></div>
+   <div><b>Jelajahi</b><p class="mt-2 flex flex-col gap-1 text-white/80"><a class="hover:text-white" href="{{ route('map') }}">Peta Penyelamatan</a><a class="hover:text-white" href="{{ route('impact') }}">Dampak Komunitas</a><a class="hover:text-white" href="{{ route('about') }}">Tentang &amp; SDGs</a><a class="hover:text-white" href="{{ route('about') }}#uji">Panduan Uji Coba</a><a class="hover:text-white" href="{{ route('about') }}#faq">FAQ</a></p></div>
    <div><b>Ikuti Kami</b><p class="mt-2 space-y-1 text-white/80">Facebook<br>Youtube<br>Instagram</p></div>
   </div>
   <p class="mt-8 text-center text-[0.6875rem] text-white/50">© {{ date('Y') }} FoodLoop · Angka dampak adalah estimasi.</p>

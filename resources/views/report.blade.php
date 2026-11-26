@@ -84,7 +84,7 @@ const kmd=(a,b,c,d)=>{const q=Math.PI/180,x=Math.sin((c-a)*q/2)**2+Math.cos(a*q)
 const localIso=d=>{const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`};
 function rep(){return{q1:@json(old('q1', '')),q2:@json(old('q2', '')),q3:@json(old('q3', '')),q4:@json(old('q4', '')),kg:@json(old('weight_kg', '')),por:@json(old('portions', '')),
  title:@json(old('title', '')),desc:@json(old('description', '')),exp:@json(old('expires_at', now()->addHours(4)->format('Y-m-d\TH:i'))),
- lat:{{ (float) old('lat', -6.2088) }},lng:{{ (float) old('lng', 106.8456) }},delivery:@json(old('delivery', 'Diantar')),pt:@json($partners),mk:null,line:null,photo:null,photoErr:'',drag:false,sending:false,locating:false,now:Date.now(),
+ lat:{{ (float) old('lat', auth()->user()->homeLocation()['lat']) }},lng:{{ (float) old('lng', auth()->user()->homeLocation()['lng']) }},delivery:@json(old('delivery', 'Diantar')),pt:@json($partners),mk:null,line:null,photo:null,photoErr:'',drag:false,sending:false,locating:false,now:Date.now(),
  get dirty(){return !!(this.title||this.por||this.kg||this.desc||this.photo)},
  init(){window.addEventListener("beforeunload",e=>{if(this.dirty&&!this.sending){e.preventDefault();e.returnValue=""}});setInterval(()=>this.now=Date.now(),30000);this.$watch('done',v=>v&&this.$nextTick(()=>this.$refs.res.scrollIntoView({behavior:'smooth',block:'center'})));['lat','lng','q1','q2','q3','q4'].forEach(k=>this.$watch(k,()=>this.drawLine()))},
  get done(){return !!(this.q1&&this.q2&&this.q3&&this.q4)},get ok(){return this.q1=='y'&&this.q2=='n'&&this.q3=='n'&&this.q4=='y'},
